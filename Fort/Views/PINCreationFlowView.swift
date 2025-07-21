@@ -14,13 +14,13 @@ struct PINCreationFlowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // 1. Judul besar di kiri atas, persis seperti desain
+            // 1. Judul besar di kiri atas
             Text(viewModel.viewTitle)
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .padding(.bottom, 40) // Jarak antara judul dan konten
+                .padding(.bottom, 40)
 
-            // 2. Konten di-center secara horizontal
+            // 2. Konten utama
             VStack(alignment: .center, spacing: 20) {
                 Text(viewModel.viewSubtitle)
                     .font(.subheadline)
@@ -39,14 +39,21 @@ struct PINCreationFlowView: View {
                         .accentColor(.clear)
                         .focused($isKeyboardFocused)
                         .onChange(of: viewModel.pin) { newValue in
+                            // --- PERBAIKAN DI SINI ---
+                            // Logika yang menyebabkan error dihapus.
+                            // Sekarang, pesan error hanya hilang jika pengguna
+                            // mulai mengetik digit baru.
+                            if !newValue.isEmpty && viewModel.pinMismatchError {
+                                viewModel.pinMismatchError = false
+                            }
+                            // --- AKHIR PERBAIKAN ---
+                            
                             if newValue.count > viewModel.pinLength {
                                 viewModel.pin = String(newValue.prefix(viewModel.pinLength))
                             }
+                            
                             if viewModel.pin.count == viewModel.pinLength {
                                 viewModel.processPinEntry()
-                            }
-                            if viewModel.pinMismatchError {
-                                viewModel.pinMismatchError = false
                             }
                         }
                 }
@@ -54,29 +61,34 @@ struct PINCreationFlowView: View {
                     isKeyboardFocused = true
                 }
                 
+                // Tampilan pesan error ini sekarang akan muncul dengan andal
                 if viewModel.pinMismatchError {
                     Text("PIN tidak cocok. Silakan coba lagi.")
                         .font(.caption)
                         .foregroundColor(.red)
+                        .transition(.opacity) // Animasi halus
                 }
 
-                // 3. Teks informasi di bawah input PIN
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("• Gunakan PIN untuk keamanan transaksi Anda")
-                    Text("• Pastikan kamu mengingat PIN ini")
-                    Text("• Rahasiakan PIN dari siapa pun")
+                // 3. Teks informasi dengan alignment yang sudah disesuaikan
+                VStack(alignment: .center, spacing: 8) {
+                    Text("Gunakan PIN untuk keamanan transaksi Anda")
+                        .multilineTextAlignment(.center)
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("• Pastikan kamu mengingat PIN ini")
+                        Text("• Rahasiakan PIN dari siapa pun")
+                    }
                 }
                 .font(.caption)
                 .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top)
             }
             
             Spacer() // Mendorong semua konten ke atas
         }
         .padding()
-        .navigationBarTitleDisplayMode(.inline) // Kita akan mengontrol judul secara manual
-        .navigationBarBackButtonHidden(false) // Pastikan tombol back terlihat
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(false)
         .onAppear {
             isKeyboardFocused = true
         }
