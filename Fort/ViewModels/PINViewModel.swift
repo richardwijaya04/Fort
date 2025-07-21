@@ -18,17 +18,14 @@ class PINViewModel: ObservableObject {
     @Published var pin: String = ""
     @Published var flowState: PINFlowState = .creating
     @Published var pinToConfirm: String = ""
-    @Published var pinMismatchError: Bool = false // Nama variabel dikoreksi
+    @Published var pinMismatchError: Bool = false
 
-    let pinLength = 6 // Nama variabel dikoreksi
+    let pinLength = 6
 
-    // Properties for UI
     var viewTitle: String {
         switch flowState {
-        case .creating:
-            return "Buat PIN" // Disesuaikan ke Bahasa Indonesia
-        case .confirming:
-            return "Konfirmasi PIN" // Disesuaikan ke Bahasa Indonesia
+        case .creating, .confirming:
+            return "Buat PIN"
         case .finished:
             return ""
         }
@@ -45,30 +42,13 @@ class PINViewModel: ObservableObject {
         }
     }
 
-    func appendDigit(_ digit: String) {
-        guard pin.count < pinLength else { return }
-        pin += digit
-
-        if pin.count == pinLength {
-            processPinEntry()
-        }
-    }
-
-    func deleteDigit() {
-        guard !pin.isEmpty else { return }
-        pin.removeLast()
-        if pinMismatchError {
-            pinMismatchError = false
-        }
-    }
-
-    private func processPinEntry() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+    func processPinEntry() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             switch self.flowState {
             case .creating:
                 self.pinToConfirm = self.pin
                 self.flowState = .confirming
-                self.pin = "" // Reset input untuk konfirmasi
+                self.pin = ""
             case .confirming:
                 self.validateConfirmationPIN()
             case .finished:

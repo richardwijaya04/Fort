@@ -9,29 +9,27 @@ import SwiftUI
 
 struct OTPView: View {
     var body: some View {
+        // NavigationStack diperlukan untuk mendapatkan tombol "Back" otomatis
         NavigationStack {
-            VStack {
-                Text("Halaman OTP")
-                    .font(.largeTitle)
-                Text("Masukkan kode OTP yang dikirimkan.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-
-                NavigationLink("Verifikasi & Buat PIN") {
+            VStack(spacing: 20) {
+                // Konten halaman OTP Anda bisa ditaruh di sini
+                Text("Halaman Verifikasi OTP")
+                    .font(.title)
+                
+                // NavigationLink akan membawa pengguna ke alur PIN
+                NavigationLink("Verifikasi & Lanjut ke PIN") {
                     PINLoginOrCreationView()
                 }
-                .padding(.top, 40)
                 .buttonStyle(.borderedProminent)
+                .padding(.top)
             }
             .navigationTitle("Verifikasi OTP")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
 
-// Wrapper view untuk mengelola state navigasi
 struct PINLoginOrCreationView: View {
-    // FIX: Panggilan ke retrievePin() tidak lagi butuh 'try' dan pengecekan '!= nil'
-    // sudah benar untuk tipe data opsional.
     @State private var isPINSet: Bool = KeychainService.shared.retrievePin() != nil
     
     var body: some View {

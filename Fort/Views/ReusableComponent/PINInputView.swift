@@ -6,35 +6,38 @@
 //
 
 import SwiftUI
-import SwiftUI
 
 struct PINInputView: View {
     let pin: String
     let pinLength: Int
     let hasError: Bool
 
-    // Warna hijau muda yang sesuai dengan desain
-    private let boxColor = Color(red: 239/255, green: 243/255, blue: 244/255)
-    private let filledBoxColor = Color(red: 216/255, green: 238/255, blue: 225/255)
-
+    // Warna hijau muda yang lebih sesuai dengan desain referensi
+    private let boxColor = Color(red: 233/255, green: 245/255, blue: 236/255)
 
     var body: some View {
         HStack(spacing: 12) {
             ForEach(0..<pinLength, id: \.self) { index in
                 ZStack {
-                    let isFilled = index < pin.count
-                    
                     RoundedRectangle(cornerRadius: 12)
-                        // Gunakan warna hijau jika terisi, jika tidak warna abu-abu muda
-                        .fill(isFilled ? filledBoxColor : boxColor)
-                        .frame(height: 55)
+                        .fill(boxColor)
+                        .frame(width: 50, height: 55)
                         .overlay(
+                            // Border hanya muncul (merah) saat ada error
                             RoundedRectangle(cornerRadius: 12)
-                                .stroke(hasError ? Color.red : Color.clear, lineWidth: 2)
+                                .stroke(hasError ? Color.red : Color.clear, lineWidth: 1.5)
                         )
+                    
+                    if index < pin.count {
+                        Circle()
+                            .fill(Color.black)
+                            .frame(width: 15, height: 15)
+                            .transition(.scale)
+                    }
                 }
             }
         }
-        .padding(.horizontal, 30)
+        .animation(.spring(), value: pin)
+        .animation(.default, value: hasError)
     }
 }

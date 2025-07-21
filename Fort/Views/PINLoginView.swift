@@ -11,59 +11,73 @@ struct PINLoginView: View {
     @State private var pin: String = ""
     @State private var errorMessage: String?
     @Binding var isPINSet: Bool
+    @FocusState private var isKeyboardFocused: Bool
 
     private let pinLength = 6
 
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            Text("Masukkan PIN Anda")
+        VStack(alignment: .leading, spacing: 0) {
+            // Judul besar di kiri atas
+            Text("Masukkan PIN")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .padding(.top, 40)
-            
-            PINInputView(pin: pin, pinLength: pinLength, hasError: errorMessage != nil)
-                .onChange(of: pin) { newValue in
-                    if newValue.count == pinLength {
-                        validatePIN()
-                    }
-                    if errorMessage != nil {
-                        errorMessage = nil
-                    }
+                .padding(.bottom, 40)
+
+            VStack(alignment: .center, spacing: 20) {
+                Text("Untuk melanjutkan, masukkan PIN keamanan Anda.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                ZStack {
+                    PINInputView(pin: pin, pinLength: pinLength, hasError: errorMessage != nil)
+                    
+                    TextField("", text: $pin)
+                        .keyboardType(.numberPad)
+                        .foregroundColor(.clear)
+                        .accentColor(.clear)
+                        .focused($isKeyboardFocused)
+                        .onChange(of: pin) { newValue in
+                            if newValue.count > pinLength {
+                                pin = String(newValue.prefix(pinLength))
+                            }
+                            if pin.count == pinLength {
+                                validatePIN()
+                            }
+                            if errorMessage != nil {
+                                errorMessage = nil
+                            }
+                        }
                 }
-            
-            if let errorMessage = errorMessage {
-                Text(errorMessage)
-                    .font(.caption)
-                    .foregroundColor(.red)
+                .onTapGesture {
+                    isKeyboardFocused = true
+                }
+
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
             }
             
             Spacer()
             
-            // PERBAIKAN DI SINI
-            NumericKeypadView(
-                onDigitTapped: { digit in
-                    guard pin.count < pinLength else { return }
-                    pin += digit
-                },
-                onDeleteTapped: {
-                    guard !pin.isEmpty else { return }
-                    pin.removeLast()
-                },
-                onSpecialKeyTapped: {
-                    // Tombol ini tidak memiliki fungsi di halaman login, jadi kita kosongkan.
+            // Tombol Lupa PIN di bagian bawah tengah
+            HStack {
+                Spacer()
+                Button("Lupa PIN?") {
+                    KeychainService.shared.deletePin()
+                    isPINSet = false
                 }
-            )
-            
-            Button("Lupa PIN?") {
-                KeychainService.shared.deletePin()
-                isPINSet = false
+                Spacer()
             }
-            .padding()
+            .padding(.bottom)
         }
         .padding()
-        .navigationTitle("Login")
-        .navigationBarBackButtonHidden(true)
-        .background(Color(.systemBackground).edgesIgnoringSafeArea(.all))
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(false)
+        .onAppear {
+            isKeyboardFocused = true
+        }
     }
     
     private func validatePIN() {
@@ -71,11 +85,14 @@ struct PINLoginView: View {
         if pin == savedPIN {
             errorMessage = nil
             print("✅ Login Berhasil!")
-            // Di sini Anda akan menavigasikan user ke dashboard atau halaman utama aplikasi
         } else {
             errorMessage = "PIN salah. Silakan coba lagi."
+            #if os(iOS)
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            #endif
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.pin = "" // Reset PIN setelah error
+                self.pin = ""
+                self.isKeyboardFocused = true
             }
         }
     }
