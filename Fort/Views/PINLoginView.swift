@@ -33,14 +33,13 @@ struct PINLoginView: View {
                         .accentColor(.clear)
                         .focused($isKeyboardFocused)
                         .disabled(viewModel.isLocked) // Nonaktifkan input saat terkunci
-                        .onChange(of: viewModel.pin) { newValue in
-                            if newValue.count > 6 {
-                                viewModel.pin = String(newValue.prefix(6))
-                            }
-                            if viewModel.pin.count == 6 {
-                                viewModel.validatePIN()
-                            }
+                    // Ganti blok .onChange yang lama dengan yang ini:
+                    .onChange(of: viewModel.pin) { newValue in
+                        // Validasi jika panjang PIN sudah 6 digit
+                        if newValue.count == 6 {
+                            viewModel.validatePIN()
                         }
+                    }
                 }
                 .onTapGesture {
                     if !viewModel.isLocked {

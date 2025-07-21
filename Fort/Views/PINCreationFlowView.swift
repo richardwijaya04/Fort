@@ -38,24 +38,17 @@ struct PINCreationFlowView: View {
                         .foregroundColor(.clear)
                         .accentColor(.clear)
                         .focused($isKeyboardFocused)
-                        .onChange(of: viewModel.pin) { newValue in
-                            // --- PERBAIKAN DI SINI ---
-                            // Logika yang menyebabkan error dihapus.
-                            // Sekarang, pesan error hanya hilang jika pengguna
-                            // mulai mengetik digit baru.
-                            if !newValue.isEmpty && viewModel.pinMismatchError {
-                                viewModel.pinMismatchError = false
-                            }
-                            // --- AKHIR PERBAIKAN ---
-                            
-                            if newValue.count > viewModel.pinLength {
-                                viewModel.pin = String(newValue.prefix(viewModel.pinLength))
-                            }
-                            
-                            if viewModel.pin.count == viewModel.pinLength {
-                                viewModel.processPinEntry()
-                            }
+                    // Ganti blok .onChange yang lama dengan yang ini:
+                    .onChange(of: viewModel.pin) { newValue in
+                        if !newValue.isEmpty && viewModel.pinMismatchError {
+                            viewModel.pinMismatchError = false
                         }
+                        
+                        // Proses jika panjang PIN sudah 6 digit
+                        if newValue.count == viewModel.pinLength {
+                            viewModel.processPinEntry()
+                        }
+                    }
                 }
                 .onTapGesture {
                     isKeyboardFocused = true
