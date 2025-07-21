@@ -10,9 +10,22 @@
 		3FB5872A2E28B45F00880D10 /* Fort.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fort.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EB208EA72E2D424400117D28 /* Exceptions for "Fort" folder in "Fort" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3FB587292E28B45F00880D10 /* Fort */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3FB5872C2E28B45F00880D10 /* Fort */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EB208EA72E2D424400117D28 /* Exceptions for "Fort" folder in "Fort" target */,
+			);
 			path = Fort;
 			sourceTree = "<group>";
 		};
@@ -33,6 +46,7 @@
 			isa = PBXGroup;
 			children = (
 				3FB5872C2E28B45F00880D10 /* Fort */,
+				EBB6D0FE2E29E41B005C7654 /* Frameworks */,
 				3FB5872B2E28B45F00880D10 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +57,13 @@
 				3FB5872A2E28B45F00880D10 /* Fort.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EBB6D0FE2E29E41B005C7654 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -94,6 +115,8 @@
 			);
 			mainGroup = 3FB587212E28B45F00880D10;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3FB5872B2E28B45F00880D10 /* Products */;
 			projectDirPath = "";
@@ -253,9 +276,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 476954S3MU;
+				DEVELOPMENT_TEAM = 3N5KK4M42R;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Fort/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -281,9 +306,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 476954S3MU;
+				DEVELOPMENT_TEAM = 3N5KK4M42R;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Fort/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
