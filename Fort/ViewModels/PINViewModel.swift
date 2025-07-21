@@ -15,7 +15,25 @@ class PINViewModel: ObservableObject {
         case finished
     }
 
-    @Published var pin: String = ""
+    // --- PERUBAHAN DI SINI ---
+    @Published var pin: String = "" {
+        didSet {
+            // Filter untuk memastikan hanya angka yang bisa masuk
+            let filtered = pin.filter { "0123456789".contains($0) }
+            
+            // Hanya update jika ada perubahan untuk menghindari loop tak terbatas
+            if pin != filtered {
+                pin = filtered
+            }
+            
+            // Batasi panjang PIN langsung di sini
+            if pin.count > pinLength {
+                pin = String(pin.prefix(pinLength))
+            }
+        }
+    }
+    // --- AKHIR PERUBAHAN ---
+    
     @Published var flowState: PINFlowState = .creating
     @Published var pinToConfirm: String = ""
     @Published var pinMismatchError: Bool = false
