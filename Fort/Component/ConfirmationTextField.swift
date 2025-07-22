@@ -1,0 +1,53 @@
+//
+//  ConfirmationTextField.swift
+//  Fort
+//
+//  Created by William on 22/07/25.
+//
+
+import SwiftUI
+
+struct ConfirmationTextField: View {
+    
+    @Binding var text : String
+    var placeholder : String
+    var icon : String = "pencil.line"
+    var isDisabled : Bool = false
+    var onSuffixButtonClicked : (() -> Void)?
+
+    var body: some View {
+        VStack (alignment: .leading) {
+            Text(placeholder)
+                .font(.system(size: 13, weight: .bold))
+            
+            HStack {
+                TextField(
+                    "",
+                    text: .constant(""),
+                    prompt: Text(placeholder)
+                        .font(.system(size: 11, weight: .medium))
+                )
+                .disabled(isDisabled)
+                .padding(.vertical, 10)
+
+                Button(action: {
+                    onSuffixButtonClicked?()
+                }) {
+                    Image(systemName: icon) // Use SF Symbol or Text
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding(.horizontal, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color("Secondary"))
+            )
+
+        }
+    }
+}
+
+#Preview {
+//    ConfirmationTextField(text: .constant(""), placeholder: "Placeholder")
+    OCRView()
+}

@@ -6,7 +6,7 @@ import CoreVideo
 import CoreImage
 import Vision
 
-final class VisionController: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+final class VisionManager: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     @Published var image: UIImage?
     @Published var borderColor : Color = .red
@@ -50,13 +50,14 @@ final class VisionController: NSObject, ObservableObject, AVCaptureVideoDataOutp
                     .compactMap { $0.topCandidates(1).first?.string.trimmingCharacters(in: .whitespacesAndNewlines) } ?? []
                 
                 print(texts)
+                OCRResult.processOCRText(texts)
                 //TODO: Add keyword matching for “NIK”, etc. and set .green
             }
         }
     }
 }
 
-private extension VisionController {
+private extension VisionManager {
     ///Process image buffer (buffer sent is gonna be equivalent to what the user see in the cameraView)
     func processImageBuffer(_ buffer: CVImageBuffer) -> CGImage? {
         let ciImage = CIImage(cvImageBuffer: buffer)

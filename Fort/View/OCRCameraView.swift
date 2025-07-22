@@ -30,6 +30,9 @@ struct OCRCameraView: UIViewRepresentable {
         }
 
         viewModel.session.addInput(input)
+        
+      
+        
         viewModel.addOutputVideoBufferToVision()
         viewModel.startCamera()
     }
@@ -48,7 +51,7 @@ struct OCRCameraView: UIViewRepresentable {
     func updateUIView(_ uiView: VideoPreviewView, context: Context) {}
 
     func dismantleUIView(_ uiView: VideoPreviewView, coordinator: Coordinator) {
-        viewModel.session.stopRunning()
+        viewModel.stopCamera()
         NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
 }
