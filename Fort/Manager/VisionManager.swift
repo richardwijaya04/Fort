@@ -6,52 +6,45 @@ import CoreVideo
 import CoreImage
 import Vision
 
-final class VisionManager: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+final class VisionManager: NSObject, ObservableObject {
     
     @Published var image: UIImage?
-    @Published var borderColor : Color = .red
     
     private let ciContext = CIContext()
     private var lastProcessTime = Date()
     private var ocrTask: Task<Void, Never>?
     
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard Date().timeIntervalSince(lastProcessTime) > 0.5 else { return }
-        lastProcessTime = Date()
-        
-        guard let buffer = CMSampleBufferGetImageBuffer(sampleBuffer),
-              let processedBuffer = processImageBuffer(buffer) else { return }
-        
-        detectAndCropKTP(from: processedBuffer) { [weak self] ktpImage in
+    
+    func processCapturedImage(_ cgImage: CGImage, completion : @escaping ((Bool?, OCRResult?)) -> Void) {
+
+        detectAndCropKTP(from: cgImage) { [weak self] ktpImage in
             guard let self = self else { return }
-            
+
             guard let img = ktpImage,
-                  let cgImage = self.ciContext.createCGImage(img, from: img.extent) else {
-                self.setBorderState(to: .red)
+                  let croppedCG = self.ciContext.createCGImage(img, from: img.extent) else {
+                completion((false, OCRResult()))
                 return
             }
-            
-            self.setBorderState(to: .yellow)
-            
+
+
             self.ocrTask?.cancel()
             self.ocrTask = Task {
-                let textRequest = VNRecognizeTextRequest()
-                textRequest.recognitionLevel = .accurate
-                textRequest.usesLanguageCorrection = true
-                
-                let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-                do {
-                    try handler.perform([textRequest])
-                } catch {
-                    print("OCR error: \(error)")
-                }
-                
-                let texts = textRequest.results?
+                let request = VNRecognizeTextRequest()
+                request.recognitionLevel = .accurate
+                request.usesLanguageCorrection = true
+
+                let handler = VNImageRequestHandler(cgImage: croppedCG, options: [:])
+                try? handler.perform([request])
+
+                let texts = request.results?
                     .compactMap { $0.topCandidates(1).first?.string.trimmingCharacters(in: .whitespacesAndNewlines) } ?? []
+
+//                print("OCR result: \(texts)")
+                let res = OCRResult.processOCRText(texts).1
+                print(res.printSummary())
                 
-                print(texts)
-                OCRResult.processOCRText(texts)
-                //TODO: Add keyword matching for “NIK”, etc. and set .green
+                
+                completion((true, res))
             }
         }
     }
@@ -132,14 +125,6 @@ private extension VisionManager {
             } catch {
                 print("Rectangle detection failed: \(error)")
                 completion(nil)
-            }
-        }
-    }
-    
-    func setBorderState(to color: Color) {
-        DispatchQueue.main.async {
-            withAnimation {
-                self.borderColor = color
             }
         }
     }

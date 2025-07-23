@@ -10,23 +10,27 @@ import SwiftUI
 struct ConfirmationTextField: View {
     
     @Binding var text : String
-    var placeholder : String
+    var title : String
+    var placeholder: String?
     var icon : String = "pencil.line"
     var isDisabled : Bool = false
+    var keyboardType : UIKeyboardType = .default
     var onSuffixButtonClicked : (() -> Void)?
 
     var body: some View {
         VStack (alignment: .leading) {
-            Text(placeholder)
+            Text(title)
                 .font(.system(size: 13, weight: .bold))
             
             HStack {
                 TextField(
                     "",
-                    text: .constant(""),
-                    prompt: Text(placeholder)
+                    text: $text,
+                    prompt: Text(placeholder ?? title)
                         .font(.system(size: 11, weight: .medium))
                 )
+                .keyboardType(keyboardType)
+                .submitLabel(.continue)
                 .disabled(isDisabled)
                 .padding(.vertical, 10)
 

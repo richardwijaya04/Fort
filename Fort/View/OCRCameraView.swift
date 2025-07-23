@@ -19,23 +19,28 @@ struct OCRCameraView: UIViewRepresentable {
     }
     
     private func setupCamera() {
-        viewModel.session.sessionPreset = .high
+        viewModel.session.sessionPreset = .photo
 
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
               let input = try? AVCaptureDeviceInput(device: camera),
-              viewModel.session.canAddInput(input),
-              viewModel.session.canAddOutput(viewModel.videoOutput) else {
+              viewModel.session.canAddInput(input) else {
             print("Camera setup failed.")
             return
         }
 
+        viewModel.session.beginConfiguration()
         viewModel.session.addInput(input)
-        
-      
-        
-        viewModel.addOutputVideoBufferToVision()
+
+        if viewModel.session.canAddOutput(viewModel.output) {
+            viewModel.session.addOutput(viewModel.output)
+        } else {
+            print("Failed to add photo output")
+        }
+
+        viewModel.session.commitConfiguration()
         viewModel.startCamera()
     }
+
 
     func makeUIView(context: Context) -> VideoPreviewView {
         let view = VideoPreviewView()

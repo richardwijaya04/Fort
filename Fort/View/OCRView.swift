@@ -39,12 +39,12 @@ struct OCRView: View {
                         .cornerRadius(16)
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(visionManager.borderColor ,lineWidth: 3)
+                                .stroke(Color("Primary") ,lineWidth: 3)
                         )
                         .shadow(radius: 10)
                     
                     PrimaryButton(text: "Ambil Foto") {
-                        viewModel.processOnCapturePhotoButtonClicked(state: visionManager.borderColor)
+                        viewModel.processOnCapturePhotoButtonClicked()
                     }
                     
                     VStack (spacing: 5) {
@@ -60,15 +60,16 @@ struct OCRView: View {
                     
                 }
                 .padding(.horizontal, 32)
-                
-                
-                
             }
             .navigationTitle(Text("Foto KTP"))
             .navigationBarTitleDisplayMode(.large)
             
             // second layer for custom alert
-            if (viewModel.isShowConfirmationAlert){
+            if (viewModel.isProcessing){
+                Color.black.opacity(0.5).ignoresSafeArea()
+                ProgressView()
+            }
+            else if viewModel.isShowConfirmationAlert && viewModel.resultOCR != nil {
                 Color.black.opacity(0.5).ignoresSafeArea()
                     .onTapGesture {
                         viewModel.toggleConfirmationAlert()
@@ -79,12 +80,10 @@ struct OCRView: View {
                         .font(.system(size: 25, weight: .bold))
                         .padding(.bottom, 15)
                     
-                    ConfirmationTextField(text: .constant(""), placeholder: "Nama Lengkap")
-                    ConfirmationTextField(text: .constant(""), placeholder: "NIK")
+                    ConfirmationTextField(text: $viewModel.confirmationName ,title: "Nama Lengkap")
+                    ConfirmationTextField(text: $viewModel.confirmationNIK , title: "NIK")
                     
-                    ConfirmationTextField(text: .constant(""), placeholder: "Tanggal Lahir", icon: "calendar", isDisabled: true) {
-                        
-                    }
+                    ConfirmationTextField(text: $viewModel.confirmationBirthDate, title: "Tanggal Lahir", placeholder: "contoh : 12/08/1990", keyboardType: .numberPad)
                         .padding(.bottom, 15)
                     
                     PrimaryButton(text: "Konfirmasi") {
@@ -96,8 +95,13 @@ struct OCRView: View {
                 .padding(.horizontal, 25)
             }
         }
+        .onChange(of: viewModel.confirmationBirthDate) { oldValue, newValue in
+            viewModel.formatBirthDate(newValue: newValue, oldValue: oldValue)
+        }
+        
     }
 }
+
 
 #Preview {
     OCRView()
