@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("log_status") var log_status = false
+//    @AppStorage("log_status") var log_status = false
     @StateObject var otpModel = OTPViewModel()
     
     var body: some View {
         NavigationStack {
-            if log_status {
+            if otpModel.log_status {
                 HomeView()
             }
             else {

@@ -1,27 +1,43 @@
 //
 //  HomeView.swift
-//  Fort
+//  TestOtp
 //
-//  Created by Richard WIjaya Harianto on 18/07/25.
+//  Created by Dicky Dharma Susanto on 18/07/25.
 //
 
 import SwiftUI
 
 struct HomeView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "house.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.green)
-            Text("Selamat Datang!")
+    @EnvironmentObject var otpModel: OTPViewModel
+    
+    var body: some View{
+        VStack(spacing: 20) {
+            Text("Home")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .padding(.top)
-            Text("Anda berhasil login.")
+            
+            Text("Anda berhasil login!")
                 .font(.headline)
                 .foregroundColor(.secondary)
+            
+            Spacer()
+            
+            Button("Logout") {
+                otpModel.logout()
+            }
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(Color.red)
         }
-        .navigationTitle("Dashboard")
+        .padding()
+        .navigationTitle("Home")
         .navigationBarBackButtonHidden(true)
     }
+}
+
+#Preview {
+    HomeView()
+        .environmentObject(OTPViewModel())
 }

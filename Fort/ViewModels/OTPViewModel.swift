@@ -23,13 +23,25 @@ class OTPViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var verificationCode: String?
     @Published var isNavigatingToVerification = false
-    @AppStorage("log_status") var log_status = false
+    @Published var isNavigatingToPin = false
+    @Published var log_status: Bool = false
+    private var cancellables = Set<AnyCancellable>()
     
     @Published var timeRemaining = 60
     @Published var timer: AnyCancellable?
     
     @Published var showAlert: Bool = false
     @Published var errorMsg: String = ""
+    
+    init() {
+            self.log_status = UserDefaults.standard.bool(forKey: "log_status")
+            
+            $log_status
+                .sink { newValue in
+                    UserDefaults.standard.set(newValue, forKey: "log_status")
+                }
+                .store(in: &cancellables)
+        }
     
     func sendOTP() async {
         guard !isLoading else { return }
@@ -72,7 +84,7 @@ class OTPViewModel: ObservableObject {
         do {
             try await Auth.auth().signIn(with: credential)
             isLoading = false
-            log_status = true
+            isNavigatingToPin = true
             timer?.cancel()
         } catch {
             handleError(error: error)

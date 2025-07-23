@@ -11,6 +11,7 @@ struct PINCreationFlowView: View {
     @StateObject private var viewModel = PINViewModel()
     @Binding var isPINCreationComplete: Bool
     @FocusState private var isKeyboardFocused: Bool
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -80,8 +81,20 @@ struct PINCreationFlowView: View {
             Spacer() // Mendorong semua konten ke atas
         }
         .padding()
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(false)
+        .navigationBarTitleDisplayMode(.large)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading:
+            Button {
+                presentationMode.wrappedValue.dismiss()
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left")
+                        .font(.body.weight(.medium))
+                    Text("Back")
+                }
+                .foregroundStyle(.black)
+            }
+        )
         .onAppear {
             isKeyboardFocused = true
         }

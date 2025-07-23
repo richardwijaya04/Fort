@@ -92,8 +92,9 @@ struct Verification: View {
         )
         .background(
             NavigationLink(
-                destination: HomeView().environmentObject(otpModel),
-                isActive: $otpModel.log_status
+                destination:
+                    PINLoginOrCreationView(),
+                isActive: $otpModel.isNavigatingToPin
             ) {
                 EmptyView()
             }
