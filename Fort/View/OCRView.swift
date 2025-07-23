@@ -12,6 +12,7 @@ struct OCRView: View {
     
     @StateObject var visionManager : VisionManager
     @StateObject var viewModel : OCRCameraViewModel
+    @StateObject private var keyboardObserver = KeyboardObserver()
     
     init() {
         let vision = VisionManager()
@@ -71,9 +72,15 @@ struct OCRView: View {
             }
             else if viewModel.isShowConfirmationAlert && viewModel.resultOCR != nil {
                 Color.black.opacity(0.5).ignoresSafeArea()
+                    .contentShape(Rectangle()) // ensures full-tap coverage
                     .onTapGesture {
-                        viewModel.toggleConfirmationAlert()
+                        if keyboardObserver.isKeyboardVisible {
+                            hideKeyboard()
+                        } else {
+                            viewModel.toggleConfirmationAlert()
+                        }
                     }
+
                 
                 VStack (spacing: 10) {
                     Text("Konfirmasi Data KTP")
@@ -93,12 +100,47 @@ struct OCRView: View {
                 .padding()
                 .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
                 .padding(.horizontal, 25)
+                .onTapGesture {
+                    if keyboardObserver.isKeyboardVisible {
+                        hideKeyboard()
+                    }
+                }
             }
         }
         .onChange(of: viewModel.confirmationBirthDate) { oldValue, newValue in
             viewModel.formatBirthDate(newValue: newValue, oldValue: oldValue)
         }
         
+    }
+}
+
+
+final class KeyboardObserver: ObservableObject {
+    @Published var isKeyboardVisible = false
+    
+    init() {
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            self.isKeyboardVisible = true
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            self.isKeyboardVisible = false
+        }
+    }
+}
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
     }
 }
 
