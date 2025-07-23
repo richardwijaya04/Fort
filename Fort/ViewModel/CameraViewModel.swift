@@ -15,7 +15,9 @@ import SwiftUI
 final class OCRCameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
     
     @Published var isShowConfirmationAlert: Bool = false
+    @Published var isShowErrorAlert: Bool = false
     @Published var isProcessing: Bool = false
+    @Published var isOCRConfirmed: Bool = false
     @Published var resultOCR : OCRResult? {
         didSet {
             updateConfirmationData(from: resultOCR)
@@ -25,7 +27,7 @@ final class OCRCameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptur
     
     @Published var confirmationName: String = ""
     @Published var confirmationNIK: String = ""
-    @Published var confirmationBirthDate: String = ""
+    @Published var confirmationBirthDate: String = "" 
 
     
 
@@ -98,6 +100,10 @@ final class OCRCameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptur
 
         visionController.processCapturedImage(cgImage) { result in
             guard let isValidKTP = result.0, let retValOCR = result.1 else {
+                DispatchQueue.main.async {
+                    self.isProcessing = false
+                    self.isShowErrorAlert = true
+                }
                 return
             }
             

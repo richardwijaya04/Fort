@@ -22,6 +22,11 @@ struct OCRView: View {
     
     var body: some View {
         ZStack {
+            NavigationLink(destination: EmptyView(), isActive: $viewModel.isOCRConfirmed) {
+                    EmptyView()
+                }
+                .hidden()
+            
             VStack {
                 VStack(spacing: 25) {
                     
@@ -70,9 +75,36 @@ struct OCRView: View {
                 Color.black.opacity(0.5).ignoresSafeArea()
                 ProgressView()
             }
+            else if viewModel.isShowErrorAlert {
+                Color.black.opacity(0.5).ignoresSafeArea()
+                
+                VStack (spacing: 25) {
+                    Image(systemName: "x.circle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                        .foregroundStyle(.red)
+                    
+                    VStack (spacing: 36){
+                        VStack (spacing: 5){
+                            Text("KTP Tidak Terdeteksi")
+                                .font(.system(size: 24, weight: .semibold))
+                            
+                            Text("Pastikan KTP berada di dalam bingkai")
+                                .font(.system(size: 14, weight: .regular))
+                        }
+                        ErrorButton(text: "Foto Ulang") {
+                            viewModel.isShowErrorAlert.toggle()
+                        }
+                    }
+                }
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
+                .padding(.horizontal, 30)
+            }
             else if viewModel.isShowConfirmationAlert && viewModel.resultOCR != nil {
                 Color.black.opacity(0.5).ignoresSafeArea()
-                    .contentShape(Rectangle()) // ensures full-tap coverage
+//                    .contentShape(Rectangle()) // ensures full-tap coverage
                     .onTapGesture {
                         if keyboardObserver.isKeyboardVisible {
                             hideKeyboard()
@@ -94,7 +126,7 @@ struct OCRView: View {
                         .padding(.bottom, 15)
                     
                     PrimaryButton(text: "Konfirmasi") {
-                        
+                        viewModel.isOCRConfirmed.toggle()
                     }
                 }
                 .padding()

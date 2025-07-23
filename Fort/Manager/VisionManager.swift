@@ -14,38 +14,52 @@ final class VisionManager: NSObject, ObservableObject {
     private var lastProcessTime = Date()
     private var ocrTask: Task<Void, Never>?
     
+    enum detectKTPResult {
+        case notDetected
+        case detectionFailed(Error)
+        case cropped(CIImage)
+    }
     
     func processCapturedImage(_ cgImage: CGImage, completion : @escaping ((Bool?, OCRResult?)) -> Void) {
 
-        detectAndCropKTP(from: cgImage) { [weak self] ktpImage in
+        detectAndCropKTP(from: cgImage) { [weak self] result in
             guard let self = self else { return }
-
-            guard let img = ktpImage,
-                  let croppedCG = self.ciContext.createCGImage(img, from: img.extent) else {
-                completion((false, OCRResult()))
+            
+            switch result {
+            case .notDetected:
+                completion((false, nil))
                 return
+            case .detectionFailed(let error):
+                print("\(error)")
+                return
+            case .cropped(let ktpImage):
+                guard let croppedCG = self.ciContext.createCGImage(ktpImage, from: ktpImage.extent) else {
+                    completion((false, OCRResult()))
+                    return
+                }
+
+
+                self.ocrTask?.cancel()
+                self.ocrTask = Task {
+                    let request = VNRecognizeTextRequest()
+                    request.recognitionLevel = .accurate
+                    request.usesLanguageCorrection = true
+
+                    let handler = VNImageRequestHandler(cgImage: croppedCG, options: [:])
+                    try? handler.perform([request])
+
+                    let texts = request.results?
+                        .compactMap { $0.topCandidates(1).first?.string.trimmingCharacters(in: .whitespacesAndNewlines) } ?? []
+
+    //                print("OCR result: \(texts)")
+                    let res = OCRResult.processOCRText(texts).1
+                    print(res.printSummary())
+                    
+                    
+                    completion((true, res))
+                }
             }
-
-
-            self.ocrTask?.cancel()
-            self.ocrTask = Task {
-                let request = VNRecognizeTextRequest()
-                request.recognitionLevel = .accurate
-                request.usesLanguageCorrection = true
-
-                let handler = VNImageRequestHandler(cgImage: croppedCG, options: [:])
-                try? handler.perform([request])
-
-                let texts = request.results?
-                    .compactMap { $0.topCandidates(1).first?.string.trimmingCharacters(in: .whitespacesAndNewlines) } ?? []
-
-//                print("OCR result: \(texts)")
-                let res = OCRResult.processOCRText(texts).1
-                print(res.printSummary())
-                
-                
-                completion((true, res))
-            }
+            
         }
     }
 }
@@ -84,7 +98,7 @@ private extension VisionManager {
     }
     
     
-    func detectAndCropKTP(from cgImage: CGImage, completion: @escaping (CIImage?) -> Void) {
+    func detectAndCropKTP(from cgImage: CGImage, completion: @escaping (detectKTPResult) -> Void) {
         let ciImage = CIImage(cgImage: cgImage)
         let imageSize = ciImage.extent.size
         
@@ -96,7 +110,7 @@ private extension VisionManager {
                 let ktpRect = results.first
             else {
                 print("No rectangle detected")
-                completion(nil)
+                completion(.notDetected)
                 return
             }
             
@@ -113,7 +127,7 @@ private extension VisionManager {
             )
             
             let cropped = ciImage.cropped(to: rectInPixels)
-            completion(cropped)
+            completion(.cropped(cropped))
         }
         
         rectangleRequest.minimumConfidence = 0.8
@@ -124,7 +138,7 @@ private extension VisionManager {
                 try handler.perform([rectangleRequest])
             } catch {
                 print("Rectangle detection failed: \(error)")
-                completion(nil)
+                completion(.detectionFailed(error))
             }
         }
     }
