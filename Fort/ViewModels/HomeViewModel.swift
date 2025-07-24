@@ -1,12 +1,26 @@
 //
-//  ColorExtension.swift
-//  FortHome
+//  HomeViewModel.swift
+//  Fort
 //
-//  Created by Elia K on 21/07/25.
+//  Created by Dicky Dharma Susanto on 24/07/25.
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
+
+enum LoanLimitStatus {
+    case notRegistered
+    case calculating
+    case limitAvailable
+}
+
+
+class HomeViewModel: ObservableObject {
+    @Published var loanLimitStatus: LoanLimitStatus = .notRegistered
+    @Published var isNavigatingToLogin = false
+    @Published var isNavigatingToApplyLoan = false
+}
+
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

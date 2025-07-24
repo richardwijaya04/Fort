@@ -84,15 +84,22 @@ struct PINCreationFlowView: View {
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading:
-            Button {
-                presentationMode.wrappedValue.dismiss()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "chevron.left")
-                        .font(.body.weight(.medium))
-                    Text("Back")
+            Group {
+                if viewModel.flowState == .confirming {
+                    Button {
+                        withAnimation {
+                            viewModel.flowState = .creating
+                            viewModel.pin = ""
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.body.weight(.medium))
+                            Text("Kembali")
+                        }
+                        .foregroundStyle(.black)
+                    }
                 }
-                .foregroundStyle(.black)
             }
         )
         .onAppear {

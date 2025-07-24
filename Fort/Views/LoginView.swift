@@ -1,5 +1,5 @@
 //
-//  Login.swift
+//  LoginView.swift
 //  TestOtp
 //
 //  Created by Dicky Dharma Susanto on 21/07/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Login: View {
+struct LoginView: View {
     
     @EnvironmentObject var otpModel: OTPViewModel
     @Environment(\.presentationMode) var presentationMode
@@ -121,7 +121,7 @@ struct Login: View {
         )
         .background(
             NavigationLink(
-                destination: Verification().environmentObject(otpModel),
+                destination: VerificationView().environmentObject(otpModel),
                 isActive: $otpModel.isNavigatingToVerification
             ) {
                 EmptyView()
@@ -184,7 +184,7 @@ struct CheckboxToggleStyle: ToggleStyle {
 
 #Preview {
     NavigationView {
-        Login()
+        LoginView()
             .environmentObject(OTPViewModel())
     }
 }

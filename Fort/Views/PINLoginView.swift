@@ -79,18 +79,6 @@ struct PINLoginView: View {
         .navigationTitle("Login")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading:
-            Button {
-                presentationMode.wrappedValue.dismiss()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "chevron.left")
-                        .font(.body.weight(.medium))
-                    Text("Back")
-                }
-                .foregroundStyle(.black)
-            }
-        )
         .onAppear {
             if !viewModel.isLocked {
                 isKeyboardFocused = true

@@ -14,7 +14,7 @@ class PINViewModel: ObservableObject {
         case confirming
         case finished
     }
-
+    
     // --- PERUBAHAN DI SINI ---
     @Published var pin: String = "" {
         didSet {
@@ -37,9 +37,9 @@ class PINViewModel: ObservableObject {
     @Published var flowState: PINFlowState = .creating
     @Published var pinToConfirm: String = ""
     @Published var pinMismatchError: Bool = false
-
+    
     let pinLength = 6
-
+    
     var viewTitle: String {
         switch flowState {
         case .creating, .confirming:
@@ -48,7 +48,7 @@ class PINViewModel: ObservableObject {
             return ""
         }
     }
-
+    
     var viewSubtitle: String {
         switch flowState {
         case .creating:
@@ -59,7 +59,7 @@ class PINViewModel: ObservableObject {
             return ""
         }
     }
-
+    
     func processPinEntry() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             switch self.flowState {
@@ -74,7 +74,7 @@ class PINViewModel: ObservableObject {
             }
         }
     }
-
+    
     private func validateConfirmationPIN() {
         if pin == pinToConfirm {
             KeychainService.shared.savePin(pin)

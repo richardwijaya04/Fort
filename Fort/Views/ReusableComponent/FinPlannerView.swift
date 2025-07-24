@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct FinPlannerView: View {
+    
+    @StateObject var calculatorViewModel: CalculatorViewModel = CalculatorViewModel()
+    
     var body: some View {
         ZStack{
             Rectangle()
@@ -29,7 +32,9 @@ struct FinPlannerView: View {
                     
                 HStack{
                     Spacer()
-                    Button(action: {}) {
+                    Button {
+                        calculatorViewModel.isNavigatingToCalculator = true
+                    } label: {
                         Text("Coba Simulasi")
                             .foregroundColor(Color(hex: "181E1E"))
                             .padding()
@@ -48,10 +53,17 @@ struct FinPlannerView: View {
         }
         .frame(width: 356, height: 156)
         .shadow(radius: 10)
-        
+        NavigationLink(
+            destination: CalculatorSimulatorView().environmentObject(calculatorViewModel),
+            isActive: $calculatorViewModel.isNavigatingToCalculator
+        ) {
+            EmptyView()
+        }
     }
 }
 
 #Preview {
-    FinPlannerView()
+    NavigationStack{
+        FinPlannerView()
+    }
 }

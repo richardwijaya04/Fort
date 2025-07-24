@@ -52,7 +52,7 @@ struct LimitLoadView: View {
             }
             .padding()
         }
-        .frame(height: 220)
+        .frame(width:356, height: 220)
         .padding()
     }
 }

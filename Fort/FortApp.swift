@@ -29,7 +29,7 @@ struct FortpApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            ContentView()
         }
     }
 }
