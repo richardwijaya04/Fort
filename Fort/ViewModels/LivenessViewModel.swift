@@ -16,6 +16,7 @@ class LivenessViewModel: ObservableObject {
     @Published var currentChallengeNumber: Int = 0
     @Published var totalChallenges: Int = 3
     @Published var isFaceDetected: Bool = false
+    @Published var isMaskDetected: Bool = false
     
     private var frameRect: CGRect = .zero
     private let livenessValidator = LivenessValidator()
@@ -56,7 +57,7 @@ class LivenessViewModel: ObservableObject {
             statusMessage = "\(challenge.description)"
             
         case .success:
-            statusMessage = "Validasi berhasil! Semua tantangan selesai."
+            statusMessage = "Validasi berhasil!"
             isSuccess = true
             
             // Reset setelah 2 detik
@@ -99,6 +100,7 @@ class LivenessViewModel: ObservableObject {
     func startFaceDetection() {
         // Reset states for face detection phase
         isFaceDetected = false
+        isMaskDetected = false
         statusMessage = "Taruh wajah di kamera"
     }
     
@@ -120,6 +122,7 @@ class LivenessViewModel: ObservableObject {
         isSuccess = false
         currentChallengeNumber = 0
         isFaceDetected = false
+        isMaskDetected = false
     }
     
     func restartValidation() {
