@@ -13,6 +13,7 @@ class LivenessViewModel: ObservableObject {
     @Published var statusMessage: String = "Posisikan wajah Anda di dalam bingkai"
     @Published var isFaceInFrame: Bool = false
     @Published var isSuccess: Bool = false
+    @Published var isFailure: Bool = false
     @Published var currentChallengeNumber: Int = 0
     @Published var totalChallenges: Int = 3
     @Published var isFaceDetected: Bool = false
@@ -68,6 +69,7 @@ class LivenessViewModel: ObservableObject {
         case .failure(let reason):
             statusMessage = reason
             isFaceInFrame = false
+            self.isFailure = true
             
             // Reset setelah 2 detik
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
@@ -123,6 +125,7 @@ class LivenessViewModel: ObservableObject {
         currentChallengeNumber = 0
         isFaceDetected = false
         isMaskDetected = false
+        isFailure = false
     }
     
     func restartValidation() {

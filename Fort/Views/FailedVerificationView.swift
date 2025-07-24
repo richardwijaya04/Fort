@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FailedVerificationView: View {
+    let onRetry: () -> Void
     var body: some View {
         ZStack {
             Color("FailedVerificationBackground")
@@ -33,7 +34,7 @@ struct FailedVerificationView: View {
                     .padding(.horizontal, 30)
                 Button(action: {
                     // Action to retry verification
-                    
+                    onRetry()
                 }) {
                     Text("Coba Lagi")
                         .font(.system(size: 16, weight: .semibold))
@@ -48,7 +49,7 @@ struct FailedVerificationView: View {
         }
     }
 }
-
-#Preview {
-    FailedVerificationView()
-}
+//
+//#Preview {
+//    FailedVerificationView()
+//}

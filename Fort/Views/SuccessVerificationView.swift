@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SuccessVerificationView: View {
+    let onCompletion: () -> Void
     var body: some View {
         ZStack {
             // Light green background
@@ -49,9 +50,10 @@ struct SuccessVerificationView: View {
             }
 //            .padding(.horizontal, 40)
         }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                 onCompletion()
+            }
+        }
     }
-}
-
-#Preview {
-    SuccessVerificationView()
 }

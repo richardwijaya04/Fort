@@ -16,8 +16,10 @@ struct LivenessView: View {
     @State private var isRunning = false
     @State private var hasNavigated = false
     
-    let onNext: () -> Void
-    let onPrevious: () -> Void
+//    let onNext: () -> Void
+//    let onPrevious: () -> Void
+    let onSuccess: () -> Void
+    let onFailure: () -> Void
 
     var body: some View {
         ZStack {
@@ -162,15 +164,25 @@ struct LivenessView: View {
         .onDisappear {
             viewModel.stopSession()
         }
+//        .onChange(of: viewModel.isSuccess) { _, isSuccess in
+//            if isSuccess && !hasNavigated {
+//                hasNavigated = true
+//                // Add a slight delay to show the success overlay
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+//                    onNext()
+//                }
+//            }
+//        }
         .onChange(of: viewModel.isSuccess) { _, isSuccess in
-            if isSuccess && !hasNavigated {
-                hasNavigated = true
-                // Add a slight delay to show the success overlay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    onNext()
-                }
-            }
-        }
+                   if isSuccess {
+                       onSuccess() // Laporkan keberhasilan
+                   }
+               }
+               .onChange(of: viewModel.isFailure) { _, isFailure in
+                   if isFailure {
+                       onFailure() // Laporkan kegagalan
+                   }
+               }
     }
     // Keep all your existing computed properties and helper methods...
     // (statusText, frameColor, canStartVerification, etc.)
