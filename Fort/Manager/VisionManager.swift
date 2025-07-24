@@ -53,7 +53,6 @@ final class VisionManager: NSObject, ObservableObject {
 
     //                print("OCR result: \(texts)")
                     let res = OCRResult.processOCRText(texts).1
-                    print(res.printSummary())
                     
                     
                     completion((true, res))

@@ -22,7 +22,7 @@ struct OCRView: View {
     
     var body: some View {
         ZStack {
-            NavigationLink(destination: EmptyView(), isActive: $viewModel.isOCRConfirmed) {
+            NavigationLink(destination: PersonalInfoView(ocrResult: viewModel.resultOCR ?? OCRResult()), isActive: $viewModel.isOCRConfirmed) {
                     EmptyView()
                 }
                 .hidden()
@@ -67,8 +67,6 @@ struct OCRView: View {
                 }
                 .padding(.horizontal, 32)
             }
-            .navigationTitle(Text("Foto KTP"))
-            .navigationBarTitleDisplayMode(.large)
             
             // second layer for custom alert
             if (viewModel.isProcessing){
@@ -142,7 +140,9 @@ struct OCRView: View {
         .onChange(of: viewModel.confirmationBirthDate) { oldValue, newValue in
             viewModel.formatBirthDate(newValue: newValue, oldValue: oldValue)
         }
-        
+        .navigationTitle(Text("Foto KTP"))
+        .navigationBarTitleDisplayMode(.large)
+
     }
 }
 

@@ -15,8 +15,6 @@ struct ContentView: View {
                     .foregroundStyle(.blue)
             }
         }
-        
-       
     }
 }
 
