@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var otpModel: OTPViewModel
+    @StateObject var calculatorModel: CalculatorViewModel = CalculatorViewModel()
     
     var body: some View{
         VStack(spacing: 20) {
@@ -19,6 +20,22 @@ struct HomeView: View {
             Text("Anda berhasil login!")
                 .font(.headline)
                 .foregroundColor(.secondary)
+            
+            Button {
+                calculatorModel.isNavigatingToCalculator = true
+            } label: {
+                Text("Go to Calculator")
+            }
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(Color.blue)
+            .cornerRadius(8)
+            
+            NavigationLink(destination: CalculatorSimulatorView(), isActive: $calculatorModel.isNavigatingToCalculator) {
+                EmptyView()
+            }
             
             Spacer()
             
@@ -38,6 +55,8 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
-        .environmentObject(OTPViewModel())
+    NavigationStack {
+        HomeView()
+            .environmentObject(OTPViewModel())
+    }
 }
