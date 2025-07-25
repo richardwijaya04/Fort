@@ -57,10 +57,14 @@ struct MainPersonalIdentityFlowView: View {
                             onFailure: { showFailedView = true }
                         ).id(livenessResetID)
                     case .content:
-                        ContentView(
-                            onNext: { withAnimation { flowState = .step3 } },
-                            onPrevious: { withAnimation { flowState = .liveness } }
-                        )
+                        LivenessView(
+                            onSuccess: { showSuccessView = true },
+                            onFailure: { showFailedView = true }
+                        ).id(livenessResetID)
+//                        ContentView(
+//                            onNext: { withAnimation { flowState = .step3 } },
+//                            onPrevious: { withAnimation { flowState = .liveness } }
+//                        )
                     case .step3:
                         StepView(title: "Step 3", onNext: { withAnimation{ flowState = .step4 } }, onPrevious: { withAnimation{ flowState = .content } })
                         
