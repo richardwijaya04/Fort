@@ -12,6 +12,9 @@ struct ApplyLoanView: View {
     @StateObject private var viewModel = ApplyLoanViewModel()
     @Environment(\.presentationMode) var presentationMode
 
+    // State untuk memicu navigasi ke halaman PIN
+    @State private var isNavigatingToPIN = false
+
     var body: some View {
         // Latar belakang abu-abu untuk seluruh layar
         ZStack {
@@ -26,6 +29,14 @@ struct ApplyLoanView: View {
                     
                     termsAndConditionsSection
                         .padding(.horizontal)
+                    
+                    // Link navigasi tersembunyi yang dikontrol oleh state
+                    NavigationLink(
+                        destination: LoanPINVerificationView(),
+                        isActive: $isNavigatingToPIN,
+                        label: { EmptyView() }
+                    )
+                    .hidden()
                     
                     Spacer(minLength: 24)
                     
@@ -95,14 +106,11 @@ struct ApplyLoanView: View {
     }
 
     private var loanDetailsCard: some View {
-        // Menggunakan Vstack biasa, bukan dari ViewModel
         VStack(alignment: .leading, spacing: 16) {
             detailRow(label: "Jumlah Diterima", value: viewModel.currencyFormatter.string(from: NSNumber(value: viewModel.amountReceived)) ?? "-")
             detailRow(label: "Suku Bunga per Hari", value: String(format: "%.2f%%", viewModel.dailyInterestRate * 100))
             detailRow(label: "Bunga per Bulan", value: viewModel.currencyFormatter.string(from: NSNumber(value: viewModel.monthlyInterest)) ?? "-")
 
-            // ## PERBAIKAN DROPDOWN DI SINI ##
-            // Style baru diterapkan, yang membungkus semuanya dalam satu kartu putih.
             DisclosureGroup(
                 "Jadwal Cicilan",
                 content: {
@@ -151,23 +159,18 @@ struct ApplyLoanView: View {
         .padding(.horizontal)
     }
 
-    // ## PERBAIKAN ALIGNMENT CHECKBOX DI SINI ##
     private var termsAndConditionsSection: some View {
         HStack(alignment: .top, spacing: 10) {
-            // Kolom khusus untuk ikon Checkbox
             VStack(alignment: .center, spacing: 16) {
                 Toggle("", isOn: $viewModel.hasAgreedToTerms)
                     .toggleStyle(CheckboxOnlyStyle())
-                    // Menyesuaikan tinggi agar cocok dengan baris teks pertama
                     .frame(height: 30, alignment: .top)
 
                 Toggle("", isOn: $viewModel.hasNoOtherLoans)
                     .toggleStyle(CheckboxOnlyStyle())
-                    // Menyesuaikan tinggi agar cocok dengan baris teks pertama
                     .frame(height: 30, alignment: .top)
             }
             
-            // Kolom khusus untuk Teks
             VStack(alignment: .leading, spacing: 16) {
                 Text("Sebelum melanjutkan, saya telah membaca dan memahami **Perjanjian Pinjaman**")
                     .font(.caption)
@@ -180,10 +183,12 @@ struct ApplyLoanView: View {
         }
     }
     
-    // MARK: - Helper Views & Functions (Tidak ada perubahan di bawah ini)
-    
     private var submitButton: some View {
-        Button(action: viewModel.submitLoanApplication) {
+        Button(action: {
+            if viewModel.isSubmissionEnabled {
+                self.isNavigatingToPIN = true
+            }
+        }) {
             Text("Ajukan Pinjaman")
                 .fontWeight(.bold)
                 .foregroundColor(viewModel.isSubmissionEnabled ? .black : Color(.systemGray))
@@ -202,9 +207,7 @@ struct ApplyLoanView: View {
                 .frame(height: 8)
             
             Slider(value: $viewModel.loanAmount, in: viewModel.minLoan...viewModel.maxLoan, step: 10_000)
-                 // Ganti warna thumb/kenop menjadi putih
                 .accentColor(.white)
-                // Jadikan track transparan agar track custom di belakang terlihat
                 .onAppear {
                     UISlider.appearance().minimumTrackTintColor = UIColor(Color("Primary").opacity(0.8))
                     UISlider.appearance().maximumTrackTintColor = .clear
@@ -233,15 +236,6 @@ struct ApplyLoanView: View {
         }
     }
     
-    private func navigationRow(label: String, value: String? = nil) -> some View {
-        HStack {
-            Text(label).font(.subheadline).foregroundColor(.secondary)
-            Spacer()
-            if let value = value { Text(value).font(.subheadline).fontWeight(.semibold) }
-            Image(systemName: "chevron.right").foregroundColor(.secondary)
-        }
-    }
-
     private func installmentDetailView(installment: Installment) -> some View {
          VStack(alignment: .leading, spacing: 8) {
              HStack {
