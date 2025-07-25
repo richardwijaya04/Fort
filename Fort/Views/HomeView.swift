@@ -5,13 +5,19 @@
 //  Created by Elia K on 21/07/25.
 //
 
+// Views/HomeView.swift
+
 import SwiftUI
 
 struct HomeView: View {
     
     @EnvironmentObject var otpModel: OTPViewModel
-    @StateObject var calculatorModel: CalculatorViewModel = CalculatorViewModel()
-    @StateObject var homeViewModel = HomeViewModel()
+    @StateObject var homeViewModel: HomeViewModel // Deklarasi diubah
+    
+    // Initializer baru yang mengizinkan status awal untuk di-passing
+    init(initialStatus: LoanLimitStatus = .notRegistered) {
+        _homeViewModel = StateObject(wrappedValue: HomeViewModel(initialStatus: initialStatus))
+    }
     
     var body: some View {
         ScrollView {
@@ -30,65 +36,36 @@ struct HomeView: View {
                         .padding(.bottom, 30)
                     
                     HStack {
-                        Button {
-                            homeViewModel.loanLimitStatus = .notRegistered
-                        } label: {
-                            Text("Belum Daftar")
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                                .foregroundStyle(.white)
-                        }
-                        Button {
-                            homeViewModel.loanLimitStatus = .calculating
-                        } label: {
-                            Text("Menghitung")
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                                .foregroundStyle(.white)
-                        }
-                        Button {
-                            homeViewModel.loanLimitStatus = .limitAvailable
-                        } label: {
-                            Text("Limit Siap")
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                                .foregroundStyle(.white)
-                        }
-                        Button {
-                            homeViewModel.loanLimitStatus = .upcomingPayment
-                        } label: {
-                            Text("Upcoming Limit")
-                                .padding()
-                                .background(Color.blue)
-                                .cornerRadius(10)
-                                .foregroundStyle(.white)
-                        }
+                        // Tombol-tombol ini bisa dihapus jika hanya untuk debugging
+                        Button("Belum Daftar") { homeViewModel.loanLimitStatus = .notRegistered }
+                        Button("Menghitung") { homeViewModel.loanLimitStatus = .calculating }
+                        Button("Limit Siap") { homeViewModel.loanLimitStatus = .limitAvailable }
+                        Button("Upcoming") { homeViewModel.loanLimitStatus = .upcomingPayment }
                     }
                     .padding()
                     
                     switch homeViewModel.loanLimitStatus {
                     case .notRegistered:
                         RegisterBoxView()
-                            .frame(width: 356, height: 200)
+                            .frame(width: 356, height: 220)
                             .padding(.bottom, 20)
                         
                     case .calculating:
                         LimitLoadView()
-                            .frame(width: 356, height: 200)
+                            .frame(width: 356, height: 220)
                             .padding(.bottom, 20)
                         
                     case .limitAvailable:
                         LimitBoxView()
-                            .frame(width: 356, height: 200)
+                            .frame(width: 356, height: 220)
                             .padding(.bottom, 20)
+                            
                     case .upcomingPayment:
                         UpcomingBillCardView()
-                            .frame(width: 356, height: 200)
+                            .frame(width: 356, height: 220)
                             .padding(.bottom, 20)
                     }
+                    
                     FinPlannerView()
                     
                     VStack (alignment: .leading, spacing: 8){
@@ -101,15 +78,15 @@ struct HomeView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden()
+        .navigationBarHidden(true) // Sembunyikan navigation bar bawaan
         .environmentObject(homeViewModel)
     }
 }
 
 #Preview {
-    NavigationStack{
-        HomeView().environmentObject(OTPViewModel())
-    }
+    // Preview sekarang juga bisa dites dengan status berbeda
+    HomeView(initialStatus: .upcomingPayment)
+        .environmentObject(OTPViewModel())
 }
 
 struct Logo_HelpCentreView: View {

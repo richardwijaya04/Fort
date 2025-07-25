@@ -18,22 +18,17 @@ struct LoanPINVerificationView: View {
     
     var body: some View {
         VStack(spacing: 40) {
-            // Header
             VStack(alignment: .leading, spacing: 8) {
                 Text("PIN Keamanan Anda")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                
+                    .font(.largeTitle).fontWeight(.bold)
                 Text("Masukkan 6 digit PIN anda untuk melanjutkan proses pinjaman dengan aman")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.subheadline).foregroundColor(.secondary)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 30)
-            // Spacer untuk mendorong konten PIN ke tengah, menyisakan ruang di bawah
+            .padding(.top, 40)
             
-            // Konten PIN
+            
             VStack(spacing: 24) {
                 ZStack {
                     PINInputView(
@@ -41,11 +36,9 @@ struct LoanPINVerificationView: View {
                         pinLength: 6,
                         hasError: viewModel.hasError
                     )
-                    
                     TextField("", text: $viewModel.pin)
                         .keyboardType(.numberPad)
-                        .foregroundColor(.clear)
-                        .accentColor(.clear)
+                        .foregroundColor(.clear).accentColor(.clear)
                         .focused($isKeyboardFocused)
                         .disabled(viewModel.isLocked)
                 }
@@ -55,23 +48,21 @@ struct LoanPINVerificationView: View {
 
                 if viewModel.isLocked {
                     Text(viewModel.lockoutMessage)
-                        .font(.caption)
-                        .foregroundColor(.red)
+                        .font(.caption).foregroundColor(.red)
                 } else {
                     Button("Lupa PIN Keamanan?") {
                         // Logika lupa PIN
                     }
-                    .font(.subheadline)
-                    .foregroundColor(Color("Primary"))
+                    .font(.subheadline).foregroundColor(Color("Primary"))
                 }
             }
             
-            // Spacer utama yang mendorong semua konten ke atas
             Spacer()
             
-            // Navigasi
+            // ## PERUBAHAN UTAMA DI SINI ##
+            // Tujuan navigasi diubah ke HomeView dengan status yang benar
             NavigationLink(
-                destination: Text("Pengajuan Pinjaman Berhasil!"),
+                destination: HomeView(initialStatus: .upcomingPayment),
                 isActive: $viewModel.navigateToSuccess,
                 label: { EmptyView() }
             )
@@ -95,7 +86,6 @@ struct LoanPINVerificationView: View {
         }
     }
 }
-
 
 #Preview {
     NavigationView {

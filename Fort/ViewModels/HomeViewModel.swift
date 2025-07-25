@@ -5,6 +5,8 @@
 //  Created by Dicky Dharma Susanto on 24/07/25.
 //
 
+// ViewModels/HomeViewModel.swift
+
 import Foundation
 import SwiftUI
 
@@ -15,15 +17,15 @@ enum LoanLimitStatus {
     case upcomingPayment
 }
 
-
 class HomeViewModel: ObservableObject {
-    @Published var loanLimitStatus: LoanLimitStatus = .notRegistered
+    @Published var loanLimitStatus: LoanLimitStatus
     @Published var isNavigatingToLogin = false
     @Published var isNavigatingToApplyLoan = false
     
     @Published var amount = 67_700
     var dueDate: Date {
-        Calendar.current.date(from: DateComponents(year: 2025, month: 8, day: 15)) ?? Date()
+        // Jatuh tempo 20 hari dari sekarang (sesuai screenshot)
+        Calendar.current.date(byAdding: .day, value: 20, to: Date()) ?? Date()
     }
     
     var daysRemainingText: String {
@@ -35,6 +37,11 @@ class HomeViewModel: ObservableObject {
         } else {
             return "Sudah jatuh tempo"
         }
+    }
+    
+    // Initializer baru untuk menerima status awal
+    init(initialStatus: LoanLimitStatus = .notRegistered) {
+        self.loanLimitStatus = initialStatus
     }
 }
 
