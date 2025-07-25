@@ -105,7 +105,7 @@ struct MainPersonalIdentityFlowView: View {
 }
 
 
-// Sementara aja, nanti ganti pake button yg sesuai sama screen
+// MARK: Sementara aja, nanti ganti pake button yg sesuai sama screen
 struct StepView: View {
     let title: String
     let onNext: () -> Void

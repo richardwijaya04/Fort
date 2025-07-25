@@ -32,11 +32,10 @@ struct LivenessView: View {
                         
                     Text(statusText)
                         .font(.system(size: isRunning ? 24 : 16, weight: isRunning ? .semibold : .regular))
-                        .frame(maxWidth: viewModel.isFaceDetected ? 250 : .infinity, minHeight: 50, alignment: isRunning ? .center : .leading)
+                        .frame(maxWidth: viewModel.isFaceDetected ? 400 : .infinity, minHeight: 50, alignment: isRunning ? .center : .leading)
                         .foregroundColor(.black)
                         .padding(.trailing, 15)
                         .padding(.leading, 40)
-                        
                         
                         .animation(.none, value: viewModel.statusMessage)
                 }
@@ -142,15 +141,15 @@ struct LivenessView: View {
             viewModel.stopSession()
         }
         .onChange(of: viewModel.isSuccess) { _, isSuccess in
-                   if isSuccess {
-                       onSuccess()
-                   }
-               }
-               .onChange(of: viewModel.isFailure) { _, isFailure in
-                   if isFailure {
-                       onFailure()
-                   }
-               }
+            if isSuccess {
+                onSuccess()
+            }
+        }
+        .onChange(of: viewModel.isFailure) { _, isFailure in
+            if isFailure {
+                onFailure()
+            }
+        }
     }
     
     // MARK: - Computed Properties
@@ -160,10 +159,10 @@ struct LivenessView: View {
         } else if viewModel.isFaceDetected {
             return """
             Wajah terdeteksi! 
-            Tekan tombol untuk memulai.
+            Tekan tombol untuk memulai
             """
         } else {
-            return "Pastikan terlihat jelas dan berada di dalam lingkaran"
+            return "Pastikan berada di dalam lingkaran \n dan terlihat jelas"
         }
     }
 

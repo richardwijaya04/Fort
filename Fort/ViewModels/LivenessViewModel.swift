@@ -22,7 +22,6 @@ class LivenessViewModel: ObservableObject {
     private var frameRect: CGRect = .zero
     private let livenessValidator = LivenessValidator()
     
-    // Tolerance untuk menentukan apakah wajah berada di dalam frame
     private let frameTolerance: CGFloat = 50.0
     
     func setFrame(rect: CGRect) {
@@ -39,7 +38,6 @@ class LivenessViewModel: ObservableObject {
         
         isFaceDetected = true
         
-        // Periksa apakah wajah berada di dalam frame
         if let facePoint = faceScreenPoint {
             let isInFrame = checkIfFaceInFrame(facePoint: facePoint)
             isFaceInFrame = isInFrame
@@ -50,7 +48,6 @@ class LivenessViewModel: ObservableObject {
             }
         }
         
-        // Jika wajah sudah di dalam frame, lakukan validasi liveness
         let status = livenessValidator.validate(anchor: anchor)
         
         switch status {
@@ -61,7 +58,6 @@ class LivenessViewModel: ObservableObject {
             statusMessage = "Validasi berhasil!"
             isSuccess = true
             
-            // Reset setelah 2 detik
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 self.resetValidation()
             }
@@ -71,7 +67,6 @@ class LivenessViewModel: ObservableObject {
             isFaceInFrame = false
             self.isFailure = true
             
-            // Reset setelah 2 detik
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 self.resetValidation()
             }
@@ -90,30 +85,24 @@ class LivenessViewModel: ObservableObject {
         let radiusX = frameRect.width / 2
         let radiusY = frameRect.height / 2
         
-        // Hitung jarak dari pusat oval (normalisasi untuk bentuk elips)
         let normalizedX = (facePoint.x - centerX) / radiusX
         let normalizedY = (facePoint.y - centerY) / radiusY
         let distance = sqrt(normalizedX * normalizedX + normalizedY * normalizedY)
         
-        // Tambahkan toleransi untuk membuat deteksi lebih mudah
-        return distance <= 1.2 // 1.2 memberikan sedikit ruang di luar bingkai
+        return distance <= 1.2
     }
     
     func startFaceDetection() {
-        // Reset states for face detection phase
         isFaceDetected = false
         isMaskDetected = false
         statusMessage = "Taruh wajah di kamera"
     }
     
     func startLivenessDetection() {
-        // Start the actual liveness detection process
         statusMessage = "Memulai verifikasi..."
-        // The AR process will begin and take over
     }
     
     func stopSession() {
-        // Stop any running sessions
         resetValidation()
     }
     

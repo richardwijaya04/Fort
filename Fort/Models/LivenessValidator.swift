@@ -30,11 +30,11 @@ enum LivenessStatus {
 
 class LivenessValidator {
     private var validationStartTime: Date?
-    private let validationTimeout: TimeInterval = 15.0 // Diperpanjang karena ada 3 tantangan
+    private let validationTimeout: TimeInterval = 15.0
     private var challenges: [LivenessChallenge] = []
     private var currentChallengeIndex: Int = 0
     private var challengeStartTime: Date?
-    private let challengeTimeout: TimeInterval = 5.0 // Timeout per tantangan
+    private let challengeTimeout: TimeInterval = 5.0
     private var isWaitingForNextChallenge: Bool = false
     private let totalChallenges: Int = 3
 
@@ -48,24 +48,20 @@ class LivenessValidator {
         isWaitingForNextChallenge = false
         currentChallengeIndex = 0
         
-        // Pilih 3 tantangan acak dari 4 yang tersedia
         let allChallenges = LivenessChallenge.allCases
         challenges = Array(allChallenges.shuffled().prefix(totalChallenges))
     }
 
     func validate(anchor: ARFaceAnchor) -> LivenessStatus {
-        // --- LAPISAN 1: VALIDASI KEDALAMAN 3D (ANTI-LAYAR) ---
         if !isGeometryAuthentic(geometry: anchor.geometry) {
             return .failure("Wajah kurang jelas. Coba pencahayaan lebih baik.")
         }
         
-        // --- LAPISAN 2: TANTANGAN-RESPONS ACAK (ANTI-VIDEO) ---
         if validationStartTime == nil {
             validationStartTime = Date()
             challengeStartTime = Date()
         }
         
-        // Periksa timeout keseluruhan
         if let startTime = validationStartTime,
            Date().timeIntervalSince(startTime) > validationTimeout {
             let reason = "Waktu habis. Coba lagi."
@@ -73,19 +69,16 @@ class LivenessValidator {
             return .failure(reason)
         }
         
-        // Periksa jika semua tantangan selesai
         guard currentChallengeIndex < challenges.count else {
             return .success
         }
         
-        // Jika sedang menunggu tantangan berikutnya, beri jeda
         if isWaitingForNextChallenge {
             return .validating(challenge: challenges[currentChallengeIndex])
         }
         
         let currentChallenge = challenges[currentChallengeIndex]
         
-        // Periksa timeout per tantangan
         if let challengeStart = challengeStartTime,
            Date().timeIntervalSince(challengeStart) > challengeTimeout {
             let reason = "Tantangan \(currentChallengeIndex + 1) gagal. Coba lagi."
@@ -93,15 +86,13 @@ class LivenessValidator {
             return .failure(reason)
         }
         
-        // Periksa apakah tantangan berhasil
         if check(challenge: currentChallenge, anchor: anchor) {
             currentChallengeIndex += 1
             isWaitingForNextChallenge = true
             
-            // Beri jeda 1 detik sebelum tantangan berikutnya
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.isWaitingForNextChallenge = false
-                self.challengeStartTime = Date() // Reset timer untuk tantangan berikutnya
+                self.challengeStartTime = Date()
             }
             
             return .challengeCompleted
@@ -115,13 +106,11 @@ class LivenessValidator {
         case .blink:
             let leftBlinkValue = anchor.blendShapes[.eyeBlinkLeft]?.floatValue ?? 0
             let rightBlinkValue = anchor.blendShapes[.eyeBlinkRight]?.floatValue ?? 0
-            // Kedua mata harus berkedip bersamaan
             return leftBlinkValue > 0.6 && rightBlinkValue > 0.6
             
         case .smile:
             let leftSmileValue = anchor.blendShapes[.mouthSmileLeft]?.floatValue ?? 0
             let rightSmileValue = anchor.blendShapes[.mouthSmileRight]?.floatValue ?? 0
-            // Senyum harus terdeteksi di kedua sisi
             return leftSmileValue > 0.4 && rightSmileValue > 0.4
             
         case .turnHeadLeft:
@@ -147,7 +136,6 @@ class LivenessValidator {
         return standardDeviation > minimumStandardDeviation
     }
     
-    // Getter untuk informasi tantangan saat ini
     func getCurrentChallengeInfo() -> (current: Int, total: Int) {
         return (currentChallengeIndex + 1, totalChallenges)
     }

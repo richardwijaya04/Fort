@@ -26,7 +26,6 @@ struct ARViewContainer: UIViewRepresentable {
         configuration.isLightEstimationEnabled = true
         arView.session.run(configuration)
         
-        // Berikan instance arView ke Coordinator
         context.coordinator.arView = arView
         arView.session.delegate = context.coordinator
         
@@ -34,7 +33,6 @@ struct ARViewContainer: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: ARView, context: Context) {
-        // Tidak perlu implementasi khusus
     }
 
     func makeCoordinator() -> Coordinator {
@@ -54,21 +52,16 @@ struct ARViewContainer: UIViewRepresentable {
             
             let faceAnchor = anchors.compactMap { $0 as? ARFaceAnchor }.first
             
-            // Proyeksikan titik 3D wajah ke titik 2D di layar
             var faceScreenPoint: CGPoint?
             if let faceAnchor = faceAnchor {
-                // Ambil titik tengah wajah di dunia 3D
                 let centerTransform = faceAnchor.transform
                 
-                // Konversi SIMD4 ke SIMD3 sebelum memproyeksikan
                 let worldPosition4 = centerTransform.columns.3
                 let worldPosition3 = SIMD3<Float>(worldPosition4.x, worldPosition4.y, worldPosition4.z)
                 
-                // Proyeksikan ke layar 2D
                 faceScreenPoint = arView.project(worldPosition3)
             }
             
-            // Kirim anchor dan titik 2D ke ViewModel
             DispatchQueue.main.async {
                 self.viewModel.process(anchor: faceAnchor, faceScreenPoint: faceScreenPoint)
             }
