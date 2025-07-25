@@ -10,7 +10,7 @@ import simd
 
 enum LivenessChallenge: CaseIterable {
     case turnHeadLeft, turnHeadRight, smile, blink
-    
+     
     var description: String {
         switch self {
         case .turnHeadLeft: return "Putar kepala ke kiri"
@@ -126,11 +126,11 @@ class LivenessValidator {
             
         case .turnHeadLeft:
             let headYaw = anchor.transform.eulerAngles.y
-            return headYaw > 0.4 // Sedikit lebih besar untuk memastikan gerakan jelas
+            return headYaw > 0.4
             
         case .turnHeadRight:
             let headYaw = anchor.transform.eulerAngles.y
-            return headYaw < -0.4 // Sedikit lebih besar untuk memastikan gerakan jelas
+            return headYaw < -0.4
         }
     }
     

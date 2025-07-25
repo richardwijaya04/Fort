@@ -16,17 +16,14 @@ struct LivenessView: View {
     @State private var isRunning = false
     @State private var hasNavigated = false
     
-//    let onNext: () -> Void
-//    let onPrevious: () -> Void
     let onSuccess: () -> Void
     let onFailure: () -> Void
 
     var body: some View {
         ZStack {
             VStack {
-                // Status text (moved from progress bar area)
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Verifikasi Wajah Anda")
+                    Text(isRunning ? "" : "Posisikan Wajah Anda")
                         .font(.system(size: 24, weight: .semibold,))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundColor(.black)
@@ -34,8 +31,8 @@ struct LivenessView: View {
                         .padding(.leading, 40)
                         
                     Text(statusText)
-                        .font(.system(size: 16, weight: .regular))
-                        .frame(maxWidth: .infinity, minHeight: 60, alignment: isRunning ? .center : .leading)
+                        .font(.system(size: isRunning ? 24 : 16, weight: isRunning ? .semibold : .regular))
+                        .frame(maxWidth: viewModel.isFaceDetected ? 250 : .infinity, minHeight: 50, alignment: isRunning ? .center : .leading)
                         .foregroundColor(.black)
                         .padding(.trailing, 15)
                         .padding(.leading, 40)
@@ -43,10 +40,8 @@ struct LivenessView: View {
                         
                         .animation(.none, value: viewModel.statusMessage)
                 }
-                // Frame oval with camera inside
                 GeometryReader { geometry in
                     ZStack {
-                        // White oval frame
                         Circle()
                             .fill(Color.white)
                             .frame(
@@ -68,7 +63,6 @@ struct LivenessView: View {
                                 y: 5
                             )
 
-                        // Camera/AR View inside oval
                         if isRunning {
                             ARViewContainer(viewModel: viewModel)
                                 .clipShape(Circle())
@@ -132,23 +126,6 @@ struct LivenessView: View {
                     value: viewModel.isFaceDetected
                 )
                 .padding(.horizontal, 32)
-
-                // Navigation buttons
-//                HStack {
-//                    Button("Previous") {
-//                        onPrevious()
-//                    }
-//                    .padding()
-//                    
-//                    Button("Next") {
-//                        onNext()
-//                    }
-//                    .padding()
-//                }
-//                .tint(.primary)
-//                .padding(.horizontal)
-
-//                Spacer()
             }
 
             // Success overlay
@@ -164,37 +141,29 @@ struct LivenessView: View {
         .onDisappear {
             viewModel.stopSession()
         }
-//        .onChange(of: viewModel.isSuccess) { _, isSuccess in
-//            if isSuccess && !hasNavigated {
-//                hasNavigated = true
-//                // Add a slight delay to show the success overlay
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-//                    onNext()
-//                }
-//            }
-//        }
         .onChange(of: viewModel.isSuccess) { _, isSuccess in
                    if isSuccess {
-                       onSuccess() // Laporkan keberhasilan
+                       onSuccess()
                    }
                }
                .onChange(of: viewModel.isFailure) { _, isFailure in
                    if isFailure {
-                       onFailure() // Laporkan kegagalan
+                       onFailure()
                    }
                }
     }
-    // Keep all your existing computed properties and helper methods...
-    // (statusText, frameColor, canStartVerification, etc.)
     
     // MARK: - Computed Properties
     private var statusText: String {
         if isRunning {
             return viewModel.statusMessage
         } else if viewModel.isFaceDetected {
-            return "Wajah terdeteksi! Tekan tombol untuk memulai."
+            return """
+            Wajah terdeteksi! 
+            Tekan tombol untuk memulai.
+            """
         } else {
-            return "Pastikan wajah terlihat jelas dan berada di dalam lingkaran"
+            return "Pastikan terlihat jelas dan berada di dalam lingkaran"
         }
     }
 
@@ -220,9 +189,6 @@ struct LivenessView: View {
 
     private var successOverlay: some View {
         ZStack {
-//            Color.green.opacity(0.8)
-//                .edgesIgnoringSafeArea(.all)
-
             VStack(spacing: 20) {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 80))

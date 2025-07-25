@@ -79,7 +79,7 @@ class LivenessViewModel: ObservableObject {
         case .challengeCompleted:
             currentChallengeNumber += 1
             if currentChallengeNumber < totalChallenges {
-                statusMessage = "Tantangan \(currentChallengeNumber)/\(totalChallenges) selesai! Lanjut ke tantangan berikutnya..."
+                statusMessage = ""
             }
         }
     }

@@ -11,14 +11,12 @@ struct SuccessVerificationView: View {
     let onCompletion: () -> Void
     var body: some View {
         ZStack {
-            // Light green background
             Color(red: 0.94, green: 0.96, blue: 0.88)
                 .ignoresSafeArea()
 
             VStack(spacing: 30) {
                 Spacer()
 
-                // Green circle with checkmark
                 ZStack {
                     Circle()
                         .fill(Color(red: 0.7, green: 0.85, blue: 0.4))
@@ -30,13 +28,11 @@ struct SuccessVerificationView: View {
                 }
 
                 VStack(spacing: 12) {
-                    // Title
                     Text("Akun Berhasil Dibuat")
                         .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.black)
                         .multilineTextAlignment(.center)
 
-                    // Subtitle
                     Text(
                         "Verifikasi berhasil, identitas anda\ntelah terkonfirmasi"
                     )
@@ -48,7 +44,6 @@ struct SuccessVerificationView: View {
 
                 Spacer()
             }
-//            .padding(.horizontal, 40)
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
