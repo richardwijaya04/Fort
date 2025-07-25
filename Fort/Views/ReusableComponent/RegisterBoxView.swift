@@ -14,7 +14,7 @@ struct RegisterBoxView: View {
     var body: some View {
         ZStack {
             // Background card
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black)
                 .shadow(radius: 5)
             
@@ -28,7 +28,7 @@ struct RegisterBoxView: View {
                     
                     
                     Text("Daftar sekarang dan temukan jumlah pinjaman yang sesuai dengan kondisi keuanganmu.")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(.white)
                         .lineSpacing(6)
                     
@@ -37,7 +37,7 @@ struct RegisterBoxView: View {
                     // Right-side image placeholder
                     Image("person-data") // Replace with actual illustration asset
                     //                                .aspectRatio(contentMode: .fit)
-                        .frame(width: 120, height: 150)
+                        .frame(width: 120, height: 120)
                     
                 }
                 
@@ -64,7 +64,7 @@ struct RegisterBoxView: View {
                EmptyView()
             }.hidden()
         }
-        .frame(height: 200)
+        .frame(height: 220)
         
     }
 }

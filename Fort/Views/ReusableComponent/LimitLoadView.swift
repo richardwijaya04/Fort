@@ -14,7 +14,7 @@ struct LimitLoadView: View {
         
         ZStack {
             // Background card
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(Color.black)
                 .shadow(radius: 5)
             

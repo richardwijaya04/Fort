@@ -12,6 +12,7 @@ enum LoanLimitStatus {
     case notRegistered
     case calculating
     case limitAvailable
+    case upcomingPayment
 }
 
 
@@ -19,6 +20,22 @@ class HomeViewModel: ObservableObject {
     @Published var loanLimitStatus: LoanLimitStatus = .notRegistered
     @Published var isNavigatingToLogin = false
     @Published var isNavigatingToApplyLoan = false
+    
+    @Published var amount = 67_700
+    var dueDate: Date {
+        Calendar.current.date(from: DateComponents(year: 2025, month: 8, day: 15)) ?? Date()
+    }
+    
+    var daysRemainingText: String {
+        let days = Calendar.current.dateComponents([.day], from: Date(), to: dueDate).day ?? 0
+        if days > 0 {
+            return "Tersisa \(days) hari"
+        } else if days == 0 {
+            return "Jatuh tempo hari ini"
+        } else {
+            return "Sudah jatuh tempo"
+        }
+    }
 }
 
 extension Color {
@@ -37,7 +54,7 @@ extension Color {
         default:
             (a, r, g, b) = (1, 1, 1, 0)
         }
-
+        
         self.init(
             .sRGB,
             red: Double(r) / 255,
@@ -45,5 +62,14 @@ extension Color {
             blue:  Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+}
+
+extension Int {
+    func formattedWithSeparator() -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = "."
+        return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
     }
 }

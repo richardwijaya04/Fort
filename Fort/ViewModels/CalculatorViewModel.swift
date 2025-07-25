@@ -32,11 +32,11 @@ enum LoanRecommendation: String {
     var message: String {
         switch self {
         case .allowed:
-            return "Berdasarkan data anda, pengajuan pinjaman dapat dilakukan."
+            return "Pinjaman ini sesuai dengan kemampuan finansialmu. Kamu bisa melanjutkan pengajuan dengan aman karena cicilan tidak membebani pendapatanmu."
         case .notRecommended:
-            return "Tidak disarankan meminjam karena pengeluaran melebihi pendapatan."
+            return "Kami tidak menyarankan pinjaman ini karena cicilan melebihi sisa pendapatanmu setelah pengeluaran. Risiko gagal bayar cukup tinggi."
         case .caution:
-            return "Hati-hati, kemampuan membayar bulanan anda mendekati batas."
+            return "Hati-hati! Jumlah cicilan mendekati batas kemampuan finansialmu. Pertimbangkan kembali sebelum melanjutkan pengajuan."
         }
     }
 
@@ -56,8 +56,25 @@ class CalculatorViewModel: ObservableObject {
     @Published var loanAmount: Double = 2_000_000
     @Published var loanDuration: LoanDuration = .threeMonths
     @Published var isNavigatingToCalculator = false
-    @Published var minPrice: Double = 100000
-    @Published var maxPrice: Double = 100000000
+    @Published var isNavigatingToHome = false
+    @Published var minPrice: Double = 100_000
+    @Published var maxPrice: Double = 10_000_0000
+    
+    private func formatInput(_ input: String) -> String {
+        let cleaned = input.replacingOccurrences(of: ".", with: "").filter { $0.isNumber }
+        guard let number = Int(cleaned) else { return "" }
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = "."
+        return formatter.string(from: NSNumber(value: number)) ?? ""
+    }
+
+    private func parseCurrencyString(_ input: String) -> Double {
+        let cleaned = input.replacingOccurrences(of: ".", with: "")
+        return Double(cleaned) ?? 0
+    }
+
     
     var monthlyInstallment: Double {
         return loanAmount / Double(loanDuration.rawValue)

@@ -14,73 +14,94 @@ struct HomeView: View {
     @StateObject var homeViewModel = HomeViewModel()
     
     var body: some View {
-        ZStack{
-            Image("Mask group")
-                .padding(.top, -660)
-            VStack{
-                Logo_HelpCentreView()
-                
-                    .padding(.bottom, 40)
-                
-                HStack {
-                    Button {
-                        homeViewModel.loanLimitStatus = .notRegistered
-                    } label: {
-                        Text("Belum Daftar")
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                            .foregroundStyle(.white)
-                    }
-                    Button {
-                        homeViewModel.loanLimitStatus = .calculating
-                    } label: {
-                        Text("Menghitung")
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                            .foregroundStyle(.white)
-                    }
-                    Button {
-                        homeViewModel.loanLimitStatus = .limitAvailable
-                    } label: {
-                        Text("Limit Siap")
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                            .foregroundStyle(.white)
-                    }
-                }.padding()
-                
-                
-                switch homeViewModel.loanLimitStatus {
-                case .notRegistered:
-                    RegisterBoxView()
-                        .frame(width: 356, height: 200)
-                        .padding(.bottom, 40)
-                    
-                case .calculating:
-                    LimitLoadView()
-                        .frame(width: 356, height: 200)
-                        .padding(.bottom, 40)
-                    
-                case .limitAvailable:
-                    LimitBoxView()
-                        .frame(width: 356, height: 200)
-                        .padding(.bottom, 40)
+        ScrollView {
+            ZStack{
+                VStack{
+                    Image("background")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 200)
+                        .ignoresSafeArea(edges: .top)
+                        .padding(.top, -20)
+                    Spacer()
                 }
-                FinPlannerView()
-                Spacer()
-                Button("Logout") {
-                    otpModel.logout()
+                VStack (spacing: 10) {
+                    Logo_HelpCentreView()
+                        .padding(.bottom, 30)
+                    
+//                    HStack {
+//                        Button {
+//                            homeViewModel.loanLimitStatus = .notRegistered
+//                        } label: {
+//                            Text("Belum Daftar")
+//                                .padding()
+//                                .background(Color.blue)
+//                                .cornerRadius(10)
+//                                .foregroundStyle(.white)
+//                        }
+//                        Button {
+//                            homeViewModel.loanLimitStatus = .calculating
+//                        } label: {
+//                            Text("Menghitung")
+//                                .padding()
+//                                .background(Color.blue)
+//                                .cornerRadius(10)
+//                                .foregroundStyle(.white)
+//                        }
+//                        Button {
+//                            homeViewModel.loanLimitStatus = .limitAvailable
+//                        } label: {
+//                            Text("Limit Siap")
+//                                .padding()
+//                                .background(Color.blue)
+//                                .cornerRadius(10)
+//                                .foregroundStyle(.white)
+//                        }
+//                        Button {
+//                            homeViewModel.loanLimitStatus = .upcomingPayment
+//                        } label: {
+//                            Text("Upcoming Limit")
+//                                .padding()
+//                                .background(Color.blue)
+//                                .cornerRadius(10)
+//                                .foregroundStyle(.white)
+//                        }
+//                    }
+//                    .padding()
+                    
+                    switch homeViewModel.loanLimitStatus {
+                    case .notRegistered:
+                        RegisterBoxView()
+                            .frame(width: 356, height: 200)
+                            .padding(.bottom, 20)
+                        
+                    case .calculating:
+                        LimitLoadView()
+                            .frame(width: 356, height: 200)
+                            .padding(.bottom, 20)
+                        
+                    case .limitAvailable:
+                        LimitBoxView()
+                            .frame(width: 356, height: 200)
+                            .padding(.bottom, 20)
+                    case .upcomingPayment:
+                        UpcomingBillCardView()
+                            .frame(width: 356, height: 200)
+                            .padding(.bottom, 20)
+                    }
+                    FinPlannerView()
+                    
+                    VStack (alignment: .leading, spacing: 8){
+                        Text("Edukasi Keuangan")
+                            .font(.system(size: 24, weight: .semibold))
+                        CarouselCard()
+                            .frame(height: 258)
+                    }
+                    .padding(.horizontal, 20)
                 }
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.red)
-                Spacer()
             }
         }
+        .navigationBarBackButtonHidden()
         .environmentObject(homeViewModel)
     }
 }
@@ -107,7 +128,7 @@ struct Logo_HelpCentreView: View {
                         .padding(.trailing,15)
                         .padding(.top,8)
                         .padding(.bottom,8)
-                        
+                    
                     
                 }
                 .foregroundColor(Color(hex: "C4E860"))
@@ -116,8 +137,9 @@ struct Logo_HelpCentreView: View {
                 .cornerRadius(110)
                 
             }
-          
+            
         }
         .padding()
     }
 }
+
