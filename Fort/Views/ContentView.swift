@@ -5,21 +5,21 @@
 //  Created by Dicky Dharma Susanto on 16/07/25.
 //
 
+// ContentView.swift
+
 import SwiftUI
 
 struct ContentView: View {
-//    @AppStorage("log_status") var log_status = false
+    // ViewModel ini tetap di sini untuk di-pass ke semua view di bawahnya
     @StateObject var otpModel = OTPViewModel()
     
     var body: some View {
         NavigationStack {
-            if otpModel.log_status {
-                HomeView()
-            }
-            else {
-                LoginView()
-            }
+            // Langsung tampilkan HomeView sebagai halaman utama.
+            // HomeView sendiri yang akan menentukan apa yang ditampilkan (kartu daftar, kartu limit, dll)
+            HomeView()
         }
+        // Pastikan OTPViewModel tersedia untuk semua child view (termasuk LoginView saat dipanggil nanti)
         .environmentObject(otpModel)
     }
 }
