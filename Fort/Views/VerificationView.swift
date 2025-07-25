@@ -93,7 +93,7 @@ struct VerificationView: View {
         .background(
             NavigationLink(
                 destination:
-                    PINLoginOrCreationView(),
+                    PINCreationFlowView(), // <-- GANTI KE SINI
                 isActive: $otpModel.isNavigatingToPin
             ) {
                 EmptyView()
