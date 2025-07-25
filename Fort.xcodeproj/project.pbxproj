@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0FD52EA52E31203700EC3F06 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 0FD52EA42E31203700EC3F06 /* FirebaseAuth */; };
+		3F8037D12E3076DD00A6A2B5 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3F8037D02E3076DD00A6A2B5 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -15,7 +15,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		0F22B9992E3121CB00822BFA /* Exceptions for "Fort" folder in "Fort" target */ = {
+		3F8037CD2E30764C00A6A2B5 /* Exceptions for "Fort" folder in "Fort" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -28,7 +28,7 @@
 		3FB5872C2E28B45F00880D10 /* Fort */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				0F22B9992E3121CB00822BFA /* Exceptions for "Fort" folder in "Fort" target */,
+				3F8037CD2E30764C00A6A2B5 /* Exceptions for "Fort" folder in "Fort" target */,
 			);
 			path = Fort;
 			sourceTree = "<group>";
@@ -40,17 +40,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0FD52EA52E31203700EC3F06 /* FirebaseAuth in Frameworks */,
+				3F8037D12E3076DD00A6A2B5 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3F8037CF2E3076DD00A6A2B5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		3FB587212E28B45F00880D10 = {
 			isa = PBXGroup;
 			children = (
 				3FB5872C2E28B45F00880D10 /* Fort */,
+				3F8037CF2E3076DD00A6A2B5 /* Frameworks */,
 				3FB5872B2E28B45F00880D10 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -83,7 +91,7 @@
 			);
 			name = Fort;
 			packageProductDependencies = (
-				0FD52EA42E31203700EC3F06 /* FirebaseAuth */,
+				3F8037D02E3076DD00A6A2B5 /* FirebaseAuth */,
 			);
 			productName = Fort;
 			productReference = 3FB5872A2E28B45F00880D10 /* Fort.app */;
@@ -114,7 +122,7 @@
 			mainGroup = 3FB587212E28B45F00880D10;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				0FD52EA32E31203700EC3F06 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				3F8037CE2E30768A00A6A2B5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3FB5872B2E28B45F00880D10 /* Products */;
@@ -273,10 +281,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Fort/Fort.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 75JMR69L2P;
+				DEVELOPMENT_TEAM = 476954S3MU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Fort/Info.plist;
@@ -285,7 +292,6 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -304,10 +310,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Fort/Fort.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 75JMR69L2P;
+				DEVELOPMENT_TEAM = 476954S3MU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Fort/Info.plist;
@@ -316,7 +321,6 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -354,9 +358,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0FD52EA32E31203700EC3F06 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		3F8037CE2E30768A00A6A2B5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 12.0.0;
@@ -365,9 +369,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0FD52EA42E31203700EC3F06 /* FirebaseAuth */ = {
+		3F8037D02E3076DD00A6A2B5 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0FD52EA32E31203700EC3F06 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 3F8037CE2E30768A00A6A2B5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
 /* End XCSwiftPackageProductDependency section */
