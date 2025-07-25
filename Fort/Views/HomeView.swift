@@ -29,45 +29,45 @@ struct HomeView: View {
                     Logo_HelpCentreView()
                         .padding(.bottom, 30)
                     
-//                    HStack {
-//                        Button {
-//                            homeViewModel.loanLimitStatus = .notRegistered
-//                        } label: {
-//                            Text("Belum Daftar")
-//                                .padding()
-//                                .background(Color.blue)
-//                                .cornerRadius(10)
-//                                .foregroundStyle(.white)
-//                        }
-//                        Button {
-//                            homeViewModel.loanLimitStatus = .calculating
-//                        } label: {
-//                            Text("Menghitung")
-//                                .padding()
-//                                .background(Color.blue)
-//                                .cornerRadius(10)
-//                                .foregroundStyle(.white)
-//                        }
-//                        Button {
-//                            homeViewModel.loanLimitStatus = .limitAvailable
-//                        } label: {
-//                            Text("Limit Siap")
-//                                .padding()
-//                                .background(Color.blue)
-//                                .cornerRadius(10)
-//                                .foregroundStyle(.white)
-//                        }
-//                        Button {
-//                            homeViewModel.loanLimitStatus = .upcomingPayment
-//                        } label: {
-//                            Text("Upcoming Limit")
-//                                .padding()
-//                                .background(Color.blue)
-//                                .cornerRadius(10)
-//                                .foregroundStyle(.white)
-//                        }
-//                    }
-//                    .padding()
+                    HStack {
+                        Button {
+                            homeViewModel.loanLimitStatus = .notRegistered
+                        } label: {
+                            Text("Belum Daftar")
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                                .foregroundStyle(.white)
+                        }
+                        Button {
+                            homeViewModel.loanLimitStatus = .calculating
+                        } label: {
+                            Text("Menghitung")
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                                .foregroundStyle(.white)
+                        }
+                        Button {
+                            homeViewModel.loanLimitStatus = .limitAvailable
+                        } label: {
+                            Text("Limit Siap")
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                                .foregroundStyle(.white)
+                        }
+                        Button {
+                            homeViewModel.loanLimitStatus = .upcomingPayment
+                        } label: {
+                            Text("Upcoming Limit")
+                                .padding()
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .padding()
                     
                     switch homeViewModel.loanLimitStatus {
                     case .notRegistered:
