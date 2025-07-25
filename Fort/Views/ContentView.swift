@@ -1,20 +1,26 @@
 //
 //  ContentView.swift
-//  Fort
+//  TestOtp
 //
-//  Created by Richard WIjaya Harianto on 17/07/25.
+//  Created by Dicky Dharma Susanto on 16/07/25.
 //
 
 import SwiftUI
 
 struct ContentView: View {
+//    @AppStorage("log_status") var log_status = false
+    @StateObject var otpModel = OTPViewModel()
+    
     var body: some View {
-        NavigationView {
-            NavigationLink(destination: OCRView()) {
-                Text("Pilih Foto")
-                    .foregroundStyle(.blue)
+        NavigationStack {
+            if otpModel.log_status {
+                HomeView()
+            }
+            else {
+                Login()
             }
         }
+        .environmentObject(otpModel)
     }
 }
 
