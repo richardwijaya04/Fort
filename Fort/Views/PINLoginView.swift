@@ -96,10 +96,10 @@ struct PINLoginView: View {
                 isKeyboardFocused = true
             }
         }
-        // Navigasi otomatis ke HomeView
+        // Navigasi otomatis ke OCRView
         .background(
             NavigationLink(
-                destination: HomeView(),
+                destination: OCRView(),
                 isActive: $viewModel.navigateToHome
             ) { EmptyView() }
         )

@@ -11,6 +11,7 @@ struct PersonalInfoView: View {
     
     let ocrResult : OCRResult
     @StateObject var viewModel : PersonalInfoViewModel
+    @StateObject var keyboardObserver : KeyboardObserver = KeyboardObserver()
     
     init(ocrResult: OCRResult) {
         self.ocrResult = ocrResult
@@ -18,34 +19,53 @@ struct PersonalInfoView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack (spacing: 15) {
-                PersonalInfoTextField(text: .constant(""), title: "Email", placeholder: "Email Pribadi")
-                PersonalInfoTextField(text: .constant(""), title: "Tujuan Penggunaan Dana")
-                PersonalInfoDropDown(title: "Status Pendidikan", options: ["S1","S2","S3","S4","S5"], selection: .constant("S1"))
-                PersonalInfoDropDown(title: "Status Pernikahan", options: ["S1","S2","S3","S4","S5"], selection: .constant("S1"))
-                PersonalInfoDropDown(title: "Provinsi Tempat Tinggal", options: ["S1","S2","S3","S4","S5"], selection: .constant("S1"))
-                PersonalInfoDropDown(title: "Kota Tempat Tinggal", options: ["S1","S2","S3","S4","S5"], selection: .constant("S1"))
-                PersonalInfoDropDown(title: "Kelurahan Tempat Tinggal", options: ["S1","S2","S3","S4","S5"], selection: .constant("S1"))
-                PersonalInfoDropDown(title: "Alamat Tempat Tinggal", options: ["S1","S2","S3","S4","S5"], selection: .constant("S1"))
-                
-                PersonalInfoTextField(text: .constant(""), title: "Alamat Tempat Tinggal")
-                
-                Text("Kesalahan data dapat menyebabkan proses verifikasi Anda ditolak")
-                    .font(.system(size: 10, weight: .regular))
-                    .padding(.bottom,14)
-                
-                PrimaryButton(text: "Selanjutnya") {
-                    
-                }
-                 
-                
-                //TODO: Tambahin image diawasi olehnya
+        ZStack {
+            NavigationLink(destination: PersonalJobInfoView(), isActive: $viewModel.isUserValid) {
+                EmptyView()
             }
-            .padding(.all, 25)
-            .navigationTitle(Text("Data Diri"))
-            .navigationBarTitleDisplayMode(.large)
+            .hidden()
+            ScrollView {
+                VStack (spacing: 50) {
+                    VStack (spacing: 15) {
+                        PersonalInfoTextField(text: $viewModel.tujuanPenggunaanDana,title: "Tujuan Penggunaan Dana", state: $viewModel.tujuanPenggunaanDanaState)
+                        
+                        PersonalInfoDropDown(title: "Pendidikan", options: PersonalInfoViewModel.listStatusPendidikan, selection: $viewModel.statusPendidikan, state: $viewModel.statusPendidikanState)
+                        
+                        PersonalInfoDropDown(title: "Status Pernikahan", options: PersonalInfoViewModel.listStatusPernikahan, selection: $viewModel.statusPernikahan, state: $viewModel.statusPernikahanState)
+                        
+                    }
+                    
+                    VStack (spacing: 15) {
+                        AddressInputView(text: $viewModel.alamatTempatTinggal, title: "Alamat Tempat Tinggal", state: $viewModel.alamatTempatTinggalState)
+                        
+                        PersonalInfoDropDown(title: "Provinsi Tempat Tinggal", options: PersonalInfoViewModel.listProvinsiTempatTinggal, selection: $viewModel.provinsiTempatTinggal, state: $viewModel.provinsiTempatTinggalState)
+                        
+                        PersonalInfoDropDown(title: "Kota Tempat Tinggal", options: PersonalInfoViewModel.listKotaTempatTinggal, selection: $viewModel.kotaTempatTinggal, state: $viewModel.kotaTempatTinggalState)
+                        
+                        PersonalInfoDropDown(title: "Kelurahan Tempat Tinggal", options: PersonalInfoViewModel.listKelurahanTempatTinggal, selection: $viewModel.kelurahanTempatTinggal, state: $viewModel.kelurahanTempatTinggalState)
+                        
+                        Text("Kesalahan data dapat menyebabkan proses verifikasi Anda ditolak")
+                            .font(.system(size: 10, weight: .regular))
+                            .padding(.bottom,14)
+                        
+                        PrimaryButton(text: "Selanjutnya") {
+                            viewModel.validateForm()
+                        }
+                        
+                        LogoOJKAFPIView()
+                        
+                    }
+                }
+                .padding(.all, 25)
+                .onTapGesture {
+                    if keyboardObserver.isKeyboardVisible {
+                       hideKeyboard()
+                    }
+                }
+            }
         }
+        .navigationTitle(Text("Data Diri"))
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 

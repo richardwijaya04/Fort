@@ -90,17 +90,7 @@ struct Login: View {
             
             Spacer()
             
-            VStack {
-                Text("Diawasi Oleh:")
-                    .font(.callout)
-                    .fontWeight(.semibold)
-                HStack {
-                    Image("ojk").resizable().scaledToFit().frame(height: 36)
-                    Image("afpi").resizable().scaledToFit().frame(height: 36)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.bottom)
+            LogoOJKAFPIView()
         }
         .ignoresSafeArea(.keyboard)
         .navigationTitle("Daftar Akun")

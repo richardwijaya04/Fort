@@ -7,21 +7,22 @@
 
 import Foundation
 
-final class OCRResult : Equatable, ObservableObject {
+final class OCRResult: Equatable, ObservableObject {
     
     static func == (lhs: OCRResult, rhs: OCRResult) -> Bool {
-            return lhs.nik == rhs.nik &&
-                   lhs.name == rhs.name &&
-                   lhs.birthPlace == rhs.birthPlace &&
-                   lhs.birthDate == rhs.birthDate &&
-                   lhs.gender == rhs.gender &&
-                   lhs.address == rhs.address &&
-                   lhs.rtRw == rhs.rtRw &&
-                   lhs.kelurahan == rhs.kelurahan &&
-                   lhs.kecamatan == rhs.kecamatan &&
-                   lhs.pekerjaan == rhs.pekerjaan &&
-                   lhs.kewarganegaraan == rhs.kewarganegaraan
-        }
+        return lhs.nik == rhs.nik &&
+               lhs.name == rhs.name &&
+               lhs.birthPlace == rhs.birthPlace &&
+               lhs.birthDate == rhs.birthDate &&
+               lhs.gender == rhs.gender &&
+               lhs.address == rhs.address &&
+               lhs.rtRw == rhs.rtRw &&
+               lhs.kelurahan == rhs.kelurahan &&
+               lhs.kecamatan == rhs.kecamatan &&
+               lhs.pekerjaan == rhs.pekerjaan &&
+               lhs.kewarganegaraan == rhs.kewarganegaraan &&
+               lhs.statusPerkawinan == rhs.statusPerkawinan
+    }
     
     @Published var nik: String?
     @Published var name: String?
@@ -34,6 +35,7 @@ final class OCRResult : Equatable, ObservableObject {
     var kecamatan: String?
     var pekerjaan: String?
     var kewarganegaraan: String?
+    var statusPerkawinan: String?
 
     init(
         nik: String? = nil,
@@ -46,7 +48,8 @@ final class OCRResult : Equatable, ObservableObject {
         kelurahan: String? = nil,
         kecamatan: String? = nil,
         pekerjaan: String? = nil,
-        kewarganegaraan: String? = nil
+        kewarganegaraan: String? = nil,
+        statusPerkawinan: String? = nil
     ) {
         self.nik = nik
         self.name = name
@@ -59,6 +62,7 @@ final class OCRResult : Equatable, ObservableObject {
         self.kecamatan = kecamatan
         self.pekerjaan = pekerjaan
         self.kewarganegaraan = kewarganegaraan
+        self.statusPerkawinan = statusPerkawinan
     }
 
     static func processOCRText(_ texts: [String]) -> (Bool, OCRResult) {
@@ -70,18 +74,18 @@ final class OCRResult : Equatable, ObservableObject {
         for (i, line) in sanitized.enumerated() {
             let originalLine = texts[i].trimmingCharacters(in: .whitespacesAndNewlines)
 
-            // NIK detection (16 digits)
             if result.nik == nil, let nik = extractNIKRegex(from: originalLine) {
                 result.nik = nik
                 continue
             }
 
-            // Birth Date detection (dd-MM-yyyy and age ≥ 17)
-            if result.birthDate == nil, let dateStr = extractDate(from: originalLine), let date = parseDate(from: dateStr), isAge17OrMore(birthDate: date) {
+            if result.birthDate == nil,
+               let dateStr = extractDate(from: originalLine),
+               let date = parseDate(from: dateStr),
+               isAge17OrMore(birthDate: date) {
                 result.birthDate = date
             }
 
-            // Birth place + date (if label exists)
             if (line.contains("tempat") || line.contains("lahir")) && result.birthPlace == nil {
                 if let components = originalLine.components(separatedBy: ":").last?.split(separator: ",", maxSplits: 1).map({ $0.trimmingCharacters(in: .whitespacesAndNewlines) }),
                    components.count == 2 {
@@ -89,13 +93,11 @@ final class OCRResult : Equatable, ObservableObject {
                 }
             }
 
-            // Gender detection
             if line.contains("jenis kelamin"), result.gender == nil {
                 let val = extractNextValue(from: texts, currentIndex: i)?.lowercased() ?? ""
                 result.gender = val.contains("laki") ? "Laki-laki" : "Perempuan"
             }
 
-            // Address
             if line.contains("alamat"), result.address == nil {
                 result.address = extractNextValue(from: texts, currentIndex: i)?.capitalized
             }
@@ -120,7 +122,10 @@ final class OCRResult : Equatable, ObservableObject {
                 result.kewarganegaraan = extractNextValue(from: texts, currentIndex: i)?.uppercased()
             }
 
-            // Name fallback
+            if line.contains("status perkawinan"), result.statusPerkawinan == nil {
+                result.statusPerkawinan = extractNextValue(from: texts, currentIndex: i)?.capitalized
+            }
+
             if line.contains("nama") && result.name == nil {
                 result.name = extractNextValue(from: texts, currentIndex: i)?.capitalized
             } else if result.name == nil && originalLine == originalLine.uppercased() && originalLine.count > 5 && originalLine.rangeOfCharacter(from: .decimalDigits) == nil {
@@ -128,7 +133,6 @@ final class OCRResult : Equatable, ObservableObject {
             }
         }
 
-        // Assign fallback name
         if result.name == nil {
             result.name = fallbackName?.capitalized
         }
@@ -136,8 +140,6 @@ final class OCRResult : Equatable, ObservableObject {
         let isComplete = result.nik != nil && result.name != nil && result.birthDate != nil
         return (isComplete, result)
     }
-
-
 
     private static func extractNextValue(from lines: [String], currentIndex: Int, maxLookahead: Int = 2) -> String? {
         let line = lines[currentIndex]
@@ -191,7 +193,7 @@ final class OCRResult : Equatable, ObservableObject {
         return false
     }
 
-        ///Debug
+    /// Debug
     func printSummary() {
         print("NIK:", self.nik ?? "-")
         print("Name:", self.name ?? "-")
@@ -204,5 +206,6 @@ final class OCRResult : Equatable, ObservableObject {
         print("Kecamatan:", self.kecamatan ?? "-")
         print("Pekerjaan:", self.pekerjaan ?? "-")
         print("Kewarganegaraan:", self.kewarganegaraan ?? "-")
+        print("Status Perkawinan:", self.statusPerkawinan ?? "-")
     }
 }

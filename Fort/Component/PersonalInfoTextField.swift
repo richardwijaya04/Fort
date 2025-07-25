@@ -13,7 +13,8 @@ struct PersonalInfoTextField: View {
     var placeholder: String? // if nil, placeholder = title
     var isDisabled : Bool = false
     var keyboardType : UIKeyboardType = .default
-
+    @Binding var state : formState
+    
     var body: some View {
         VStack (alignment: .leading) {
             Text(title)
@@ -28,7 +29,7 @@ struct PersonalInfoTextField: View {
                         .italic()
                 )
                 .keyboardType(keyboardType)
-                .submitLabel(.continue)
+                .submitLabel(.done)
                 .disabled(isDisabled)
                 .padding(.vertical, 10)
 
@@ -37,12 +38,21 @@ struct PersonalInfoTextField: View {
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(Color("Secondary"))
+                    .overlay(
+                               RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.red, lineWidth: state.isError ? 1 : 0)
+                           )
             )
-
+            
+            if state.isError {
+                Text(state.message)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.red)
+            }
         }
     }
 }
 
 #Preview {
-    PersonalInfoTextField(text: .constant(""), title: "Halo", placeholder: "Test")
+    PersonalInfoTextField(text: .constant(""), title: "Halo", placeholder: "Test", state: .constant(.emptyField(msg: "test")))
 }
