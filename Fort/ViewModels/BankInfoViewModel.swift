@@ -20,7 +20,7 @@ final class BankInfoViewModel : ObservableObject {
     @Published var nomorRekeningState : formState = .none
     
     @Published var isUserValid : Bool = false
-    func validateForm() {
+    func validateForm() -> Bool {
         var validTillEnd = true
         let msg = "harus di isi"
         
@@ -46,10 +46,11 @@ final class BankInfoViewModel : ObservableObject {
         }
         
         
-        if validTillEnd {
-            DispatchQueue.main.async {
-                self.isUserValid = true
-            }
-        }
+//        if validTillEnd {
+//            DispatchQueue.main.async {
+//                self.isUserValid = true
+//            }
+//        }
+        return validTillEnd
     }
 }

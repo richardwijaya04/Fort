@@ -51,7 +51,7 @@ struct ConfirmationTextField: View {
     }
 }
 
-#Preview {
-//    ConfirmationTextField(text: .constant(""), placeholder: "Placeholder")
-    OCRView()
-}
+//#Preview {
+////    ConfirmationTextField(text: .constant(""), placeholder: "Placeholder")
+//    OCRView()
+//}

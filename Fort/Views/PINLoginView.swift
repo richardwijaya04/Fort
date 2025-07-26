@@ -79,29 +79,28 @@ struct PINLoginView: View {
         .navigationTitle("Login")
         .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading:
-            Button {
-                presentationMode.wrappedValue.dismiss()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "chevron.left")
-                        .font(.body.weight(.medium))
-                    Text("Back")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    presentationMode.wrappedValue.dismiss()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.body.weight(.medium))
+                        Text("Back")
+                    }
+                    .foregroundStyle(.black)
                 }
-                .foregroundStyle(.black)
             }
-        )
+        }
         .onAppear {
             if !viewModel.isLocked {
                 isKeyboardFocused = true
             }
         }
-        // Navigasi otomatis ke OCRView
-        .background(
-            NavigationLink(
-                destination: OCRView(),
-                isActive: $viewModel.navigateToHome
-            ) { EmptyView() }
-        )
+        .fullScreenCover(isPresented: $viewModel.navigateToHome) {
+                    // Tujuan navigasi yang benar
+                    HomeView()
+                }
     }
 }

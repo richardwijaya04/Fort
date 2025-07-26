@@ -10,22 +10,24 @@ import SwiftUI
 
 struct OCRView: View {
     
-    @StateObject var visionManager : VisionManager
-    @StateObject var viewModel : OCRCameraViewModel
+    @ObservedObject var visionManager : VisionManager
+    @ObservedObject var viewModel : OCRCameraViewModel
+        
     @StateObject private var keyboardObserver = KeyboardObserver()
+    let onNext: () -> Void
     
-    init() {
-        let vision = VisionManager()
-        _visionManager = StateObject(wrappedValue: vision)
-        _viewModel = StateObject(wrappedValue: OCRCameraViewModel(visionController: vision))
+    init(visionManager: VisionManager, viewModel: OCRCameraViewModel, onNext: @escaping () -> Void) {
+        self.onNext = onNext
+        self._visionManager = ObservedObject(wrappedValue: visionManager)
+        self._viewModel = ObservedObject(wrappedValue: viewModel)
     }
     
     var body: some View {
         ZStack {
-            NavigationLink(destination: PersonalInfoView(ocrResult: viewModel.resultOCR ?? OCRResult()), isActive: $viewModel.isOCRConfirmed) {
-                    EmptyView()
-                }
-                .hidden()
+//            NavigationLink(destination: PersonalInfoView(ocrResult: viewModel.resultOCR ?? OCRResult()), isActive: $viewModel.isOCRConfirmed) {
+//                    EmptyView()
+//                }
+//                .hidden()
             
             VStack {
                 VStack(spacing: 25) {
@@ -124,7 +126,8 @@ struct OCRView: View {
                         .padding(.bottom, 15)
                     
                     PrimaryButton(text: "Konfirmasi") {
-                        viewModel.isOCRConfirmed.toggle()
+//                        viewModel.isOCRConfirmed.toggle()
+                        onNext()
                     }
                 }
                 .padding()
@@ -154,6 +157,6 @@ extension View {
 }
 
 
-#Preview {
-    OCRView()
-}
+//#Preview {
+//    OCRView()
+//}

@@ -10,12 +10,17 @@ import SwiftUI
 struct ContactInfoView: View {
     
     @StateObject private var viewModel = ContactInfoViewModel()
+    let onNext: () -> Void
+    
+    init(onNext: @escaping () -> Void) {
+        self.onNext = onNext
+    }
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
-                    ProgressHeaderView(currentStep: .kontak)
+//                    ProgressHeaderView(currentStep: .kontak)
                     
                     Text("Data ini diperlukan untuk proses verifikasi dan keamanan tambahan")
                         .font(.subheadline)
@@ -33,7 +38,11 @@ struct ContactInfoView: View {
                         )
                     }
 
-                    Button(action: viewModel.submitContacts) {
+                    Button {
+                        viewModel.submitContacts()
+                        onNext()
+                    }
+                    label : {
                         Text("Selanjutnya")
                             .fontWeight(.semibold)
                             .foregroundColor(viewModel.isFormValid ? .black : .gray.opacity(0.8))
@@ -66,6 +75,6 @@ struct ContactInfoView: View {
     }
 }
 
-#Preview {
-    ContactInfoView()
-}
+//#Preview {
+//    ContactInfoView()
+//}

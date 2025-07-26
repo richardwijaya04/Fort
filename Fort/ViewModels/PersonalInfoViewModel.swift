@@ -84,9 +84,18 @@ class PersonalInfoViewModel : ObservableObject {
         onInitialize()
     }
     
-    func validateForm() {
+    func validateForm() -> Bool {
         var validTillEnd = true
         let msg = "Harus di isi"
+        
+        // biar state kereset kalo di validate ulang
+//        tujuanPenggunaanDanaState = .none
+//        statusPendidikanState = .none
+//        statusPernikahanState = .none
+//        alamatTempatTinggalState = .none
+//        provinsiTempatTinggalState = .none
+//        kotaTempatTinggalState = .none
+//        kelurahanTempatTinggalState = .none
         
         if tujuanPenggunaanDana.isEmpty {
             validTillEnd = false
@@ -137,9 +146,10 @@ class PersonalInfoViewModel : ObservableObject {
             }
         }
         
-        if validTillEnd {
-            isUserValid = true
-        }
+//        if validTillEnd {
+//            isUserValid = true
+//        }
+        return validTillEnd
     }
 }
 

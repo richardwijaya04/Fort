@@ -9,15 +9,21 @@ import SwiftUI
 
 struct PersonalJobInfoView: View {
     
-    @StateObject var viewModel = PersonalJobInfoViewModel()
+    @ObservedObject var viewModel = PersonalJobInfoViewModel()
     @StateObject var keyboardObserver : KeyboardObserver = KeyboardObserver()
+    let onNext: () -> Void
+    
+    init(viewModel: PersonalJobInfoViewModel, onNext: @escaping () -> Void) {
+        self.onNext = onNext
+        _viewModel = ObservedObject(wrappedValue: viewModel)
+    }
     
     var body: some View {
         ZStack {
-            NavigationLink(destination: BankInfoView(),isActive: $viewModel.isUserValid) {
-                EmptyView()
-            }
-            .hidden()
+//            NavigationLink(destination: BankInfoView(),isActive: $viewModel.isUserValid) {
+//                EmptyView()
+//            }
+//            .hidden()
             ScrollView {
                 VStack (spacing: 50){
                     
@@ -50,7 +56,10 @@ struct PersonalJobInfoView: View {
                             .padding(.bottom,14)
                         
                         PrimaryButton(text: "Selanjutnya") {
-                            viewModel.validateForm()
+                            if viewModel.validateForm() {
+                                onNext()
+                            }
+//                            onNext()
                         }
                         
                         LogoOJKAFPIView()
@@ -105,6 +114,6 @@ struct PersonalJobInfoView: View {
     }
 }
 
-#Preview {
-    PersonalJobInfoView()
-}
+//#Preview {
+//    PersonalJobInfoView()
+//}

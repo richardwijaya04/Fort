@@ -9,21 +9,21 @@ import SwiftUI
 
 struct PersonalInfoView: View {
     
-    let ocrResult : OCRResult
-    @StateObject var viewModel : PersonalInfoViewModel
+    @ObservedObject var viewModel : PersonalInfoViewModel
     @StateObject var keyboardObserver : KeyboardObserver = KeyboardObserver()
+    let onNext: () -> Void
     
-    init(ocrResult: OCRResult) {
-        self.ocrResult = ocrResult
-        _viewModel = StateObject(wrappedValue: PersonalInfoViewModel(ocrResult: ocrResult))
+    init(viewModel: PersonalInfoViewModel, onNext : @escaping () -> Void) {
+        self.onNext = onNext
+        _viewModel = ObservedObject(wrappedValue: viewModel)
     }
     
     var body: some View {
         ZStack {
-            NavigationLink(destination: PersonalJobInfoView(), isActive: $viewModel.isUserValid) {
-                EmptyView()
-            }
-            .hidden()
+//            NavigationLink(destination: PersonalJobInfoView(), isActive: $viewModel.isUserValid) {
+//                EmptyView()
+//            }
+//            .hidden()
             ScrollView {
                 VStack (spacing: 50) {
                     VStack (spacing: 15) {
@@ -49,7 +49,10 @@ struct PersonalInfoView: View {
                             .padding(.bottom,14)
                         
                         PrimaryButton(text: "Selanjutnya") {
-                            viewModel.validateForm()
+                            if viewModel.validateForm(){
+                                onNext()
+                            }
+//                            onNext()
                         }
                         
                         LogoOJKAFPIView()
@@ -69,6 +72,6 @@ struct PersonalInfoView: View {
     }
 }
 
-#Preview {
-    PersonalInfoView(ocrResult: OCRResult())
-}
+//#Preview {
+//    PersonalInfoView(ocrResult: OCRResult())
+//}

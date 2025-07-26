@@ -9,19 +9,21 @@ import SwiftUI
 
 struct PINCreationFlowView: View {
     @StateObject private var viewModel = PINViewModel()
-    @Binding var isPINCreationComplete: Bool
     @FocusState private var isKeyboardFocused: Bool
+    
+    @Binding var isPINCreationComplete: Bool
     @Environment(\.presentationMode) var presentationMode
-
+    
+    // State untuk mengontrol navigasi ke halaman OCR
+    @State private var navigateToOCR = false
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // 1. Judul besar di kiri atas
             Text(viewModel.viewTitle)
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(.bottom, 40)
 
-            // 2. Konten utama
             VStack(alignment: .center, spacing: 20) {
                 Text(viewModel.viewSubtitle)
                     .font(.subheadline)
@@ -39,31 +41,26 @@ struct PINCreationFlowView: View {
                         .foregroundColor(.clear)
                         .accentColor(.clear)
                         .focused($isKeyboardFocused)
-                    // Ganti blok .onChange yang lama dengan yang ini:
-                    .onChange(of: viewModel.pin) { newValue in
-                        if !newValue.isEmpty && viewModel.pinMismatchError {
-                            viewModel.pinMismatchError = false
+                        .onChange(of: viewModel.pin) { _, newValue in
+                            if !newValue.isEmpty && viewModel.pinMismatchError {
+                                viewModel.pinMismatchError = false
+                            }
+                            if newValue.count == viewModel.pinLength {
+                                viewModel.processPinEntry()
+                            }
                         }
-                        
-                        // Proses jika panjang PIN sudah 6 digit
-                        if newValue.count == viewModel.pinLength {
-                            viewModel.processPinEntry()
-                        }
-                    }
                 }
                 .onTapGesture {
                     isKeyboardFocused = true
                 }
                 
-                // Tampilan pesan error ini sekarang akan muncul dengan andal
                 if viewModel.pinMismatchError {
                     Text("PIN tidak cocok. Silakan coba lagi.")
                         .font(.caption)
                         .foregroundColor(.red)
-                        .transition(.opacity) // Animasi halus
+                        .transition(.opacity)
                 }
 
-                // 3. Teks informasi dengan alignment yang sudah disesuaikan
                 VStack(alignment: .center, spacing: 8) {
                     Text("Gunakan PIN untuk keamanan transaksi Anda")
                         .multilineTextAlignment(.center)
@@ -78,29 +75,44 @@ struct PINCreationFlowView: View {
                 .padding(.top)
             }
             
-            Spacer() // Mendorong semua konten ke atas
+            Spacer()
+            
+            // Link navigasi tersembunyi ke OCRView
+            NavigationLink(
+                destination: MainPersonalIdentityFlowView(),
+                isActive: $navigateToOCR,
+                label: { EmptyView() }
+            )
+            .hidden()
         }
         .padding()
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline) // Disesuaikan agar lebih rapi
         .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading:
-            Button {
-                presentationMode.wrappedValue.dismiss()
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "chevron.left")
-                        .font(.body.weight(.medium))
-                    Text("Back")
-                }
-                .foregroundStyle(.black)
-            }
-        )
+        .toolbar {
+             ToolbarItem(placement: .navigationBarLeading) {
+                 if viewModel.flowState == .confirming {
+                     Button(action: {
+                         withAnimation {
+                             viewModel.flowState = .creating
+                             viewModel.pin = ""
+                         }
+                     }) {
+                         HStack(spacing: 4) {
+                             Image(systemName: "chevron.left")
+                             Text("Kembali")
+                         }
+                         .foregroundStyle(.black)
+                     }
+                 }
+             }
+         }
         .onAppear {
             isKeyboardFocused = true
         }
-        .onChange(of: viewModel.flowState) { newState in
+        .onChange(of: viewModel.flowState) { _, newState in
             if newState == .finished {
-                isPINCreationComplete = true
+                // Memicu navigasi saat PIN selesai dibuat
+                navigateToOCR = true
             } else if newState == .confirming {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     isKeyboardFocused = true

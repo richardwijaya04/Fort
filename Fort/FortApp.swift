@@ -29,7 +29,8 @@ struct FortpApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainPersonalIdentityFlowView()
+//            MainPersonalIdentityFlowView()
+            ContentView()
         }
     }
 }

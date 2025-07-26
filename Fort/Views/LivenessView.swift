@@ -128,10 +128,10 @@ struct LivenessView: View {
             }
 
             // Success overlay
-            if viewModel.isSuccess {
-                successOverlay
-                    .ignoresSafeArea()
-            }
+//            if viewModel.isSuccess {
+//                successOverlay
+//                    .ignoresSafeArea()
+//            }
         }
         .onAppear {
             viewModel.startFaceDetection()

@@ -10,15 +10,21 @@ import SwiftUI
 struct BankInfoView: View {
     
     @StateObject private var viewModel: BankInfoViewModel = BankInfoViewModel()
+    let onNext: () -> Void
+    
+    init(onNext: @escaping () -> Void) {
+        self.onNext = onNext
+    }
+    
     
     var body: some View {
         VStack {
             ZStack {
                 //TODO: Fill this to emergencyContact's view
-                NavigationLink(destination: EmptyView(),isActive: $viewModel.isUserValid) {
-                    EmptyView()
-                }
-                .hidden()
+//                NavigationLink(destination: EmptyView(),isActive: $viewModel.isUserValid) {
+//                    EmptyView()
+//                }
+//                .hidden()
                 ScrollView {
                     VStack (spacing: 15) {
                         VStack (alignment: .leading,spacing: 8) {
@@ -40,7 +46,10 @@ struct BankInfoView: View {
                         Spacer()
                         
                         PrimaryButton(text: "Selanjutnya") {
-                            viewModel.validateForm()
+                            if viewModel.validateForm(){
+                                onNext()
+                            }
+//                            onNext()
                         }
                         
                         LogoOJKAFPIView()
@@ -55,6 +64,6 @@ struct BankInfoView: View {
     }
 }
 
-#Preview {
-    BankInfoView()
-}
+//#Preview {
+//    BankInfoView()
+//}

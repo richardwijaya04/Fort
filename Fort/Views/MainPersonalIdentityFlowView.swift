@@ -4,33 +4,36 @@
 //
 //  Created by Lin Dan Christiano on 23/07/25.
 //
+
 import SwiftUI
 
 enum FlowState: Int, CaseIterable {
-    case liveness = 0
-    case content = 1
-    case step3 = 2
-    case step4 = 3
-    case step5 = 4
-    case step6 = 5
+    case ocr = 0
+    case personalInfo = 1
+    case personalJobInfo = 2
+    case bankInfo = 3
+    case contactInfo = 4
+    case liveness = 5
     
     var title: String {
         switch self {
+        case .ocr: return "Foto KTP"
+        case .personalInfo: return "Data Diri"
+        case .personalJobInfo: return "Pekerjaan"
+        case .bankInfo: return "Bank"
+        case .contactInfo: return "Kontak"
         case .liveness: return "Verifikasi Wajah"
-        case .content: return "Content"
-        case .step3: return "Step 3"
-        case .step4: return "Step 4"
-        case .step5: return "Step 5"
-        case .step6: return "Step 6"
         }
     }
 }
 
 struct MainPersonalIdentityFlowView: View {
-    @State private var flowState: FlowState = .liveness
+    @State private var flowState: FlowState = .ocr
     @State private var showSuccessView = false
     @State private var showFailedView = false
     @State private var livenessResetID = UUID()
+    @State private var ocrResult: OCRResult = OCRResult()
+    @State private var navigateToHome = false
     
     var body: some View {
         NavigationView {
@@ -51,31 +54,48 @@ struct MainPersonalIdentityFlowView: View {
                 
                 ZStack {
                     switch flowState {
+                    case .ocr:
+                        OCRViewWrapper(
+                            ocrResult: $ocrResult,
+                            onNext: { withAnimation { flowState = .personalInfo } }
+                        )
+                        
+                    case .personalInfo:
+                        PersonalInfoViewWrapper(
+                            ocrResult: ocrResult,
+                            onNext: { withAnimation { flowState = .personalJobInfo } },
+                            onPrevious: { withAnimation { flowState = .ocr } }
+                        )
+                        
+                    case .personalJobInfo:
+                        PersonalJobInfoViewWrapper(
+                            onNext: { withAnimation { flowState = .bankInfo } },
+                            onPrevious: { withAnimation { flowState = .personalInfo } }
+                        )
+                        
+                    case .bankInfo:
+                        BankInfoViewWrapper(
+                            onNext: { withAnimation { flowState = .contactInfo } },
+                            onPrevious: { withAnimation { flowState = .personalJobInfo } }
+                        )
+                        
+                    case .contactInfo:
+                        ContactInfoViewWrapper(
+                            onNext: { withAnimation { flowState = .liveness } },
+                            onPrevious: { withAnimation { flowState = .bankInfo } }
+                        )
+                        
                     case .liveness:
                         LivenessView(
-                            onSuccess: { showSuccessView = true },
+                            onSuccess: {
+                                showSuccessView = true
+                                // Navigate to Home after success overlay
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                    navigateToHome = true
+                                }
+                            },
                             onFailure: { showFailedView = true }
                         ).id(livenessResetID)
-                    case .content:
-                        LivenessView(
-                            onSuccess: { showSuccessView = true },
-                            onFailure: { showFailedView = true }
-                        ).id(livenessResetID)
-//                        ContentView(
-//                            onNext: { withAnimation { flowState = .step3 } },
-//                            onPrevious: { withAnimation { flowState = .liveness } }
-//                        )
-                    case .step3:
-                        StepView(title: "Step 3", onNext: { withAnimation{ flowState = .step4 } }, onPrevious: { withAnimation{ flowState = .content } })
-                        
-                    case .step4:
-                        StepView(title: "Step 4", onNext: { withAnimation{ flowState = .step5 } }, onPrevious: { withAnimation{ flowState = .step3 } })
-                        
-                    case .step5:
-                        StepView(title: "Step 5", onNext: { withAnimation{ flowState = .step6 } }, onPrevious: { withAnimation{ flowState = .step4 } })
-                        
-                    case .step6:
-                        StepView(title: "Step 6", onNext: { print("Alur Selesai") }, onPrevious: { withAnimation{ flowState = .step5 } })
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -85,46 +105,115 @@ struct MainPersonalIdentityFlowView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Back", systemImage: "chevron.backward") {
-                        // Handle back action
+                        handleBackNavigation()
                     }
                     .foregroundStyle(.black)
                 }
             }
         }
-        .fullScreenCover(isPresented: $showSuccessView) {
-            SuccessVerificationView(onCompletion: {
-                showSuccessView = false
-                withAnimation {
-                    flowState = .content
-                }
-            })
-        }
+        .navigationBarBackButtonHidden(true)
         .fullScreenCover(isPresented: $showFailedView) {
             FailedVerificationView(onRetry: {
                 showFailedView = false
                 livenessResetID = UUID()
             })
         }
+        .fullScreenCover(isPresented: $navigateToHome) {
+            HomeView()
+        }
+    }
+    
+    private func handleBackNavigation() {
+        withAnimation {
+            switch flowState {
+            case .ocr:
+                // Handle going back to PIN creation or previous screen
+                break
+            case .personalInfo:
+                flowState = .ocr
+            case .personalJobInfo:
+                flowState = .personalInfo
+            case .bankInfo:
+                flowState = .personalJobInfo
+            case .contactInfo:
+                flowState = .bankInfo
+            case .liveness:
+                flowState = .contactInfo
+            }
+        }
     }
 }
 
+// MARK: - Wrapper Views
+struct OCRViewWrapper: View {
+    @Binding var ocrResult: OCRResult
+    let onNext: () -> Void
+    @StateObject private var visionManager = VisionManager()
+    @StateObject private var viewModel: OCRCameraViewModel
+    
+    init(ocrResult: Binding<OCRResult>, onNext: @escaping () -> Void) {
+        self._ocrResult = ocrResult
+        self.onNext = onNext
+        let vision = VisionManager()
+        _viewModel = StateObject(wrappedValue: OCRCameraViewModel(visionController: vision))
+    }
+    
+    var body: some View {
+        OCRView(visionManager: visionManager, viewModel: viewModel, onNext: onNext)
+            .onChange(of: viewModel.isOCRConfirmed) { _, isConfirmed in
+                if isConfirmed {
+                    ocrResult = viewModel.resultOCR ?? OCRResult()
+                    onNext()
+                }
+            }
+    }
+}
 
-// MARK: Sementara aja, nanti ganti pake button yg sesuai sama screen
-struct StepView: View {
-    let title: String
+struct PersonalInfoViewWrapper: View {
+    let ocrResult: OCRResult
     let onNext: () -> Void
     let onPrevious: () -> Void
-
+    @StateObject private var viewModel: PersonalInfoViewModel
+    
+    init(ocrResult: OCRResult, onNext: @escaping () -> Void, onPrevious: @escaping () -> Void) {
+        self.ocrResult = ocrResult
+        self.onNext = onNext
+        self.onPrevious = onPrevious
+        _viewModel = StateObject(wrappedValue: PersonalInfoViewModel(ocrResult: ocrResult))
+    }
+    
     var body: some View {
-        VStack {
-            Text(title)
-                .font(.largeTitle)
-            HStack {
-                Button("Previous", action: onPrevious)
-                Button("Next", action: onNext)
-            }
-            .padding()
-        }
+        PersonalInfoView(viewModel: viewModel, onNext: onNext)
+    }
+}
+
+struct PersonalJobInfoViewWrapper: View {
+    let onNext: () -> Void
+    let onPrevious: () -> Void
+    @StateObject private var viewModel = PersonalJobInfoViewModel()
+    
+    var body: some View {
+        PersonalJobInfoView(viewModel: viewModel, onNext: onNext)
+    }
+}
+
+struct BankInfoViewWrapper: View {
+    let onNext: () -> Void
+    let onPrevious: () -> Void
+    @StateObject private var viewModel = BankInfoViewModel()
+    
+    var body: some View {
+        BankInfoView(onNext: onNext)
+    }
+}
+
+struct ContactInfoViewWrapper: View {
+    let onNext: () -> Void
+    let onPrevious: () -> Void
+    @StateObject private var viewModel = ContactInfoViewModel()
+    
+    var body: some View {
+        ContactInfoView(onNext: onNext)
     }
 }
 

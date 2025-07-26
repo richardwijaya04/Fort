@@ -57,7 +57,7 @@ final class PersonalJobInfoViewModel: ObservableObject {
     
     @Published var isUserValid : Bool = false
     
-    func validateForm() {
+    func validateForm() -> Bool {
         var validTillEnd = true
         let msg = "harus di isi"
         
@@ -131,10 +131,11 @@ final class PersonalJobInfoViewModel: ObservableObject {
             }
         }
         
-        if validTillEnd {
-            DispatchQueue.main.async {
-                self.isUserValid = true
-            }
-        }
+//        if validTillEnd {
+//            DispatchQueue.main.async {
+//                self.isUserValid = true
+//            }
+//        }
+        return validTillEnd
     }
 }
