@@ -58,7 +58,7 @@ struct BankInfoView: View {
                 }
             }
             .navigationTitle(Text("Bank"))
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
         }
 
     }

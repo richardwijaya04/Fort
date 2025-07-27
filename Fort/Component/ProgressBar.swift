@@ -14,10 +14,16 @@ struct ProgressBar: View {
     var body: some View {
         HStack(spacing: 0){
             ForEach(0 ..< stepsNum, id:\.self) { item in
-                Circle().stroke(lineWidth: item <= currentStep ? 10 : 2)
-                    .frame(width: 15, height: item <= currentStep ? 3 : 15)
-                    .foregroundStyle(item <= currentStep ? .black : Color("BulletBar"))
-                    .background(Color("BulletBar"))
+                ZStack {
+                    Circle()
+                        .stroke(lineWidth: 2)
+                        .foregroundColor(Color("BulletBar"))
+                    if item <= currentStep {
+                        Circle()
+                            .fill(.black)
+                    }
+                }
+                .frame(width: 15, height: 15)
                     .overlay(content: {
                             Text(stepTitle[item])
                             .fixedSize(horizontal: false, vertical: true)

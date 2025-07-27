@@ -109,7 +109,7 @@ struct PersonalJobInfoView: View {
 
         }
         .navigationTitle(Text("Pekerjaan"))
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         
     }
 }

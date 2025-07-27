@@ -57,19 +57,19 @@ struct ContactInfoView: View {
                 }
                 .padding()
             }
-            .navigationTitle("")
+            .navigationTitle(Text("Kontak"))
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        // Aksi untuk tombol kembali
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.black)
-                    }
-                }
-            }
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    Button(action: {
+//                        // Aksi untuk tombol kembali
+//                    }) {
+//                        Image(systemName: "chevron.left")
+//                            .foregroundColor(.black)
+//                    }
+//                }
+//            }
             .background(Color.white)
         }
     }

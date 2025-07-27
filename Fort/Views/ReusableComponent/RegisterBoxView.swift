@@ -57,7 +57,7 @@ struct RegisterBoxView: View {
             .padding()
             
             NavigationLink(
-                destination: Login()
+                destination: LoginView()
                     .environmentObject(OTPViewModel()),
                 isActive: $homeViewModel.isNavigatingToLogin
             ) {

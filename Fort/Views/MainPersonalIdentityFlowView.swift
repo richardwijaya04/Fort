@@ -35,79 +35,103 @@ struct MainPersonalIdentityFlowView: View {
     @State private var ocrResult: OCRResult = OCRResult()
     @State private var navigateToHome = false
     
+    @StateObject private var visionManager = VisionManager()
+    @StateObject private var ocrViewModel: OCRCameraViewModel
+    
+    init() {
+        let vision = VisionManager()
+        _visionManager = StateObject(wrappedValue: vision)
+        _ocrViewModel = StateObject(wrappedValue: OCRCameraViewModel(visionController: vision))
+    }
+    
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                if !showSuccessView && !showFailedView {
-                    VStack(spacing: 20) {
-                        Divider()
-                        ProgressBar(
-                            stepsNum: FlowState.allCases.count,
-                            currentStep: .constant(flowState.rawValue)
-                        )
-                        .padding(.horizontal, 32)
-                        .animation(.easeInOut(duration: 0.5), value: flowState)
+            ZStack {
+                VStack(spacing: 0) {
+                    if !showSuccessView && !showFailedView {
+                        VStack(spacing: 20) {
+                            Divider()
+                            ProgressBar(
+                                stepsNum: FlowState.allCases.count,
+                                currentStep: .constant(flowState.rawValue)
+                            )
+                            .padding(.horizontal, 32)
+                            .animation(.easeInOut(duration: 0.5), value: flowState)
+                        }
+                        .background(Color(.systemBackground))
+                        .zIndex(1)
                     }
-                    .background(Color(.systemBackground))
-                    .zIndex(1)
+                    
+                    ZStack {
+                        switch flowState {
+                        case .ocr:
+                            OCRViewWrapper(
+                                ocrResult: $ocrResult,
+                                onNext: { withAnimation { flowState = .personalInfo } },
+                                visionManager: visionManager,
+                                viewModel: ocrViewModel
+                            )
+                            
+                        case .personalInfo:
+                            PersonalInfoViewWrapper(
+                                ocrResult: ocrResult,
+                                onNext: { withAnimation { flowState = .personalJobInfo } },
+                                onPrevious: { withAnimation { flowState = .ocr } }
+                            )
+                            
+                        case .personalJobInfo:
+                            PersonalJobInfoViewWrapper(
+                                onNext: { withAnimation { flowState = .bankInfo } },
+                                onPrevious: { withAnimation { flowState = .personalInfo } }
+                            )
+                            
+                        case .bankInfo:
+                            BankInfoViewWrapper(
+                                onNext: { withAnimation { flowState = .contactInfo } },
+                                onPrevious: { withAnimation { flowState = .personalJobInfo } }
+                            )
+                            
+                        case .contactInfo:
+                            ContactInfoViewWrapper(
+                                onNext: { withAnimation { flowState = .liveness } },
+                                onPrevious: { withAnimation { flowState = .bankInfo } }
+                            )
+                            
+                        case .liveness:
+                            LivenessView(
+                                onSuccess: {
+                                    showSuccessView = true
+                                    // Navigate to Home after success overlay
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                        navigateToHome = true
+                                    }
+                                },
+                                onFailure: { showFailedView = true }
+                            ).id(livenessResetID)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                
-                ZStack {
-                    switch flowState {
-                    case .ocr:
-                        OCRViewWrapper(
-                            ocrResult: $ocrResult,
-                            onNext: { withAnimation { flowState = .personalInfo } }
-                        )
-                        
-                    case .personalInfo:
-                        PersonalInfoViewWrapper(
-                            ocrResult: ocrResult,
-                            onNext: { withAnimation { flowState = .personalJobInfo } },
-                            onPrevious: { withAnimation { flowState = .ocr } }
-                        )
-                        
-                    case .personalJobInfo:
-                        PersonalJobInfoViewWrapper(
-                            onNext: { withAnimation { flowState = .bankInfo } },
-                            onPrevious: { withAnimation { flowState = .personalInfo } }
-                        )
-                        
-                    case .bankInfo:
-                        BankInfoViewWrapper(
-                            onNext: { withAnimation { flowState = .contactInfo } },
-                            onPrevious: { withAnimation { flowState = .personalJobInfo } }
-                        )
-                        
-                    case .contactInfo:
-                        ContactInfoViewWrapper(
-                            onNext: { withAnimation { flowState = .liveness } },
-                            onPrevious: { withAnimation { flowState = .bankInfo } }
-                        )
-                        
-                    case .liveness:
-                        LivenessView(
-                            onSuccess: {
-                                showSuccessView = true
-                                // Navigate to Home after success overlay
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                                    navigateToHome = true
-                                }
-                            },
-                            onFailure: { showFailedView = true }
-                        ).id(livenessResetID)
+                .navigationTitle(flowState.title)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Back", systemImage: "chevron.backward") {
+                            handleBackNavigation()
+                        }
+                        .foregroundStyle(.black)
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .navigationTitle(flowState.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Back", systemImage: "chevron.backward") {
-                        handleBackNavigation()
-                    }
-                    .foregroundStyle(.black)
+                if ocrViewModel.isProcessing {
+                    Color.black.opacity(0.5).ignoresSafeArea()
+                    ProgressView()
+                } else if ocrViewModel.isShowErrorAlert {
+                    // (Anda bisa pindahkan UI Error Alert ke sini juga jika mau)
+                    Color.black.opacity(0.5).ignoresSafeArea()
+                } else if ocrViewModel.isShowConfirmationAlert && ocrViewModel.resultOCR != nil {
+                    // (Pindahkan UI Confirmation Alert ke sini juga)
+                    Color.black.opacity(0.5).ignoresSafeArea()
+                    OCRConfirmationAlertView(viewModel: ocrViewModel)
                 }
             }
         }
@@ -116,6 +140,14 @@ struct MainPersonalIdentityFlowView: View {
                 FailedVerificationView(onRetry: {
                 showFailedView = false
                 livenessResetID = UUID()
+                navigateToHome = false
+            })
+        }
+        .fullScreenCover(isPresented: $showSuccessView) {
+                SuccessVerificationView(onCompletion: {
+                showSuccessView = false
+                navigateToHome = true
+                flowState = .ocr // Reset flow state to start over
             })
         }
         .fullScreenCover(isPresented: $navigateToHome) {
@@ -144,25 +176,77 @@ struct MainPersonalIdentityFlowView: View {
     }
 }
 
+// MARK: - Confirmation Alert for OCR KTP
+struct OCRConfirmationAlertView: View {
+    @ObservedObject var viewModel: OCRCameraViewModel
+    @StateObject private var keyboardObserver = KeyboardObserver()
+    
+    var body: some View {
+        ZStack {
+            // Background semi-transparan
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    if keyboardObserver.isKeyboardVisible {
+                        hideKeyboard()
+                    } else {
+                        viewModel.toggleConfirmationAlert()
+                    }
+                }
+
+            // Konten Modal
+            VStack(spacing: 10) {
+                Text("Konfirmasi Data KTP")
+                    .font(.system(size: 25, weight: .bold))
+                    .padding(.bottom, 15)
+
+                ConfirmationTextField(text: $viewModel.confirmationName, title: "Nama Lengkap")
+                ConfirmationTextField(text: $viewModel.confirmationNIK, title: "NIK")
+                ConfirmationTextField(text: $viewModel.confirmationBirthDate, title: "Tanggal Lahir", placeholder: "contoh : 12/08/1990", keyboardType: .numberPad)
+                    .padding(.bottom, 15)
+                
+                PrimaryButton(text: "Konfirmasi") {
+                    // Tombol ini HANYA mengubah state.
+                    // Navigasi akan ditangani oleh .onChange di OCRViewWrapper
+                    viewModel.isShowConfirmationAlert = false
+                    viewModel.isOCRConfirmed = true
+                    
+                }
+            }
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
+            .padding(.horizontal, 25)
+            .onTapGesture {
+                if keyboardObserver.isKeyboardVisible {
+                    hideKeyboard()
+                }
+            }
+            .onChange(of: viewModel.confirmationBirthDate) { oldValue, newValue in
+                viewModel.formatBirthDate(newValue: newValue, oldValue: oldValue)
+            }
+        }
+    }
+}
+
 // MARK: - Wrapper Views
 struct OCRViewWrapper: View {
     @Binding var ocrResult: OCRResult
     let onNext: () -> Void
-    @StateObject private var visionManager = VisionManager()
-    @StateObject private var viewModel: OCRCameraViewModel
-    
-    init(ocrResult: Binding<OCRResult>, onNext: @escaping () -> Void) {
-        self._ocrResult = ocrResult
-        self.onNext = onNext
-        let vision = VisionManager()
-        _viewModel = StateObject(wrappedValue: OCRCameraViewModel(visionController: vision))
-    }
+    @ObservedObject var visionManager: VisionManager
+    @ObservedObject var viewModel: OCRCameraViewModel
+
+//    init(ocrResult: Binding<OCRResult>, onNext: @escaping () -> Void) {
+//        self._ocrResult = ocrResult
+//        self.onNext = onNext
+//        let vision = VisionManager()
+//        _viewModel = StateObject(wrappedValue: OCRCameraViewModel(visionController: vision))
+//    }
     
     var body: some View {
         OCRView(visionManager: visionManager, viewModel: viewModel, onNext: onNext)
             .onChange(of: viewModel.isOCRConfirmed) { _, isConfirmed in
                 if isConfirmed {
-                    ocrResult = viewModel.resultOCR ?? OCRResult()
+                    self.ocrResult = viewModel.resultOCR ?? OCRResult()
                     onNext()
                 }
             }

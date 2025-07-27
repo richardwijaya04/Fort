@@ -68,7 +68,7 @@ struct PersonalInfoView: View {
             }
         }
         .navigationTitle(Text("Data Diri"))
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
