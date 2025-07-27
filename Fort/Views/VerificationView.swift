@@ -1,5 +1,5 @@
 //
-//  Verification.swift
+//  VerificationView.swift
 //  TestOtp
 //
 //  Created by Dicky Dharma Susanto on 17/07/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Verification: View {
+struct VerificationView: View {
     
     @EnvironmentObject var otpModel: OTPViewModel
     @FocusState private var isTextFieldActive: Bool
@@ -93,7 +93,7 @@ struct Verification: View {
         .background(
             NavigationLink(
                 destination:
-                    PINLoginOrCreationView(),
+                    PINCreationFlowView(), // <-- GANTI KE SINI
                 isActive: $otpModel.isNavigatingToPin
             ) {
                 EmptyView()
@@ -159,7 +159,7 @@ struct Verification: View {
 
 #Preview {
     NavigationView {
-        Verification()
+        VerificationView()
             .environmentObject(OTPViewModel())
     }
 }
