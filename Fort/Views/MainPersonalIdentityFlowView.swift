@@ -113,7 +113,7 @@ struct MainPersonalIdentityFlowView: View {
         }
         .navigationBarBackButtonHidden(true)
         .fullScreenCover(isPresented: $showFailedView) {
-            FailedVerificationView(onRetry: {
+                FailedVerificationView(onRetry: {
                 showFailedView = false
                 livenessResetID = UUID()
             })
