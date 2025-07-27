@@ -1,4 +1,3 @@
-//
 //  ContentView.swift
 //  FortHome
 //
@@ -119,4 +118,3 @@ struct Logo_HelpCentreView: View {
         .padding()
     }
 }
-

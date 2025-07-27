@@ -12,7 +12,6 @@
 
 /* Begin PBXFileReference section */
 		3FB5872A2E28B45F00880D10 /* Fort.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fort.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A58D119B2E33718500906012 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -70,14 +69,6 @@
 				3FB5872A2E28B45F00880D10 /* Fort.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		A58D119A2E33718500906012 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				A58D119B2E33718500906012 /* GoogleService-Info.plist */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -292,7 +283,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 476954S3MU;
+				DEVELOPMENT_TEAM = 5AGMV642WQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Fort/Info.plist;
@@ -322,7 +313,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 476954S3MU;
+				DEVELOPMENT_TEAM = 5AGMV642WQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Fort/Info.plist;
