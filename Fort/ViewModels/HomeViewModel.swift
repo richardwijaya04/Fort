@@ -6,6 +6,8 @@
 
 // ViewModels/HomeViewModel.swift
 
+// ViewModels/HomeViewModel.swift
+
 import Foundation
 import SwiftUI
 
@@ -23,7 +25,6 @@ class HomeViewModel: ObservableObject {
     
     @Published var amount = 67_700
     var dueDate: Date {
-        // Jatuh tempo 20 hari dari sekarang (sesuai screenshot)
         Calendar.current.date(byAdding: .day, value: 20, to: Date()) ?? Date()
     }
     
@@ -38,9 +39,24 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    // Initializer baru untuk menerima status awal
     init(initialStatus: LoanLimitStatus = .notRegistered) {
         self.loanLimitStatus = initialStatus
+        
+        // ### PERUBAHAN DI SINI ###
+        // Jika status awal adalah 'calculating', mulai timer 5 detik.
+        if initialStatus == .calculating {
+            startCalculationTimer()
+        }
+    }
+    
+    private func startCalculationTimer() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            // Ganti status ke .limitAvailable setelah 5 detik
+            // Pastikan statusnya masih .calculating untuk menghindari race condition
+            if self.loanLimitStatus == .calculating {
+                self.loanLimitStatus = .limitAvailable
+            }
+        }
     }
 }
 

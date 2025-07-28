@@ -126,12 +126,10 @@ struct MainPersonalIdentityFlowView: View {
                     Color.black.opacity(0.5).ignoresSafeArea()
                     ProgressView()
                 } else if ocrViewModel.isShowErrorAlert {
-                    // (Anda bisa pindahkan UI Error Alert ke sini juga jika mau)
                     Color.black.opacity(0.5).ignoresSafeArea()
                     OCRFailedAlertView(viewModel: ocrViewModel)
 
                 } else if ocrViewModel.isShowConfirmationAlert && ocrViewModel.resultOCR != nil {
-                    // (Pindahkan UI Confirmation Alert ke sini juga)
                     Color.black.opacity(0.5).ignoresSafeArea()
                     OCRConfirmationAlertView(viewModel: ocrViewModel)
                 }
@@ -152,9 +150,10 @@ struct MainPersonalIdentityFlowView: View {
                 flowState = .ocr // Reset flow state to start over
             })
         }
-        // navigation after verif success
+        // ### PERUBAHAN DI SINI ###
+        // Mengirim initialStatus: .calculating ke HomeView
         .navigationDestination(isPresented: $navigateToHome) {
-            HomeView()
+            HomeView(initialStatus: .calculating)
         }
         .navigationBarBackButtonHidden(true)
     }
