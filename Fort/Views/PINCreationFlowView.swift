@@ -108,6 +108,10 @@ struct PINCreationFlowView: View {
          }
         .onAppear {
             isKeyboardFocused = true
+            
+            if viewModel.flowState == .finished {
+                viewModel.resetFlow()
+            }
         }
         .onChange(of: viewModel.flowState) { _, newState in
             if newState == .finished {

@@ -35,6 +35,8 @@ struct MainPersonalIdentityFlowView: View {
     @State private var ocrResult: OCRResult = OCRResult()
     @State private var navigateToHome = false
     
+    @Environment(\.presentationMode) var presentationMode
+    
     @StateObject private var visionManager = VisionManager()
     @StateObject private var ocrViewModel: OCRCameraViewModel
     
@@ -162,8 +164,7 @@ struct MainPersonalIdentityFlowView: View {
         withAnimation {
             switch flowState {
             case .ocr:
-                // Handle going back to PIN creation or previous screen
-                break
+                presentationMode.wrappedValue.dismiss()
             case .personalInfo:
                 flowState = .ocr
             case .personalJobInfo:

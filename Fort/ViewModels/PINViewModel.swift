@@ -85,4 +85,11 @@ class PINViewModel: ObservableObject {
             pin = ""
         }
     }
+    
+    func resetFlow() {
+        pin = ""
+        pinToConfirm = ""
+        pinMismatchError = false
+        flowState = .creating
+    }
 }
