@@ -15,12 +15,13 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            if otpModel.log_status {
-                HomeView()
-            }
-            else {
-                LoginView()
-            }
+//            if otpModel.log_status {
+//                HomeView()
+//            }
+//            else {
+//                LoginView()
+//            }
+            HomeView()
         }
         .environmentObject(otpModel)
     }
