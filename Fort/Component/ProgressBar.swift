@@ -18,6 +18,7 @@ struct ProgressBar: View {
                     Circle()
                         .stroke(lineWidth: 2)
                         .foregroundColor(Color("BulletBar"))
+                        .background(Color("BulletBar"))
                     if item <= currentStep {
                         Circle()
                             .fill(.black)
