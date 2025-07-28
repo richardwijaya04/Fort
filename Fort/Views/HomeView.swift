@@ -34,14 +34,14 @@ struct HomeView: View {
                     Logo_HelpCentreView()
                         .padding(.bottom, 30)
                     
-                    HStack {
-                        // Tombol-tombol ini bisa dihapus jika hanya untuk debugging
-                        Button("Belum Daftar") { homeViewModel.loanLimitStatus = .notRegistered }
-                        Button("Menghitung") { homeViewModel.loanLimitStatus = .calculating }
-                        Button("Limit Siap") { homeViewModel.loanLimitStatus = .limitAvailable }
-                        Button("Upcoming") { homeViewModel.loanLimitStatus = .upcomingPayment }
-                    }
-                    .padding()
+//                    HStack {
+//                        // Tombol-tombol ini bisa dihapus jika hanya untuk debugging
+//                        Button("Belum Daftar") { homeViewModel.loanLimitStatus = .notRegistered }
+//                        Button("Menghitung") { homeViewModel.loanLimitStatus = .calculating }
+//                        Button("Limit Siap") { homeViewModel.loanLimitStatus = .limitAvailable }
+//                        Button("Upcoming") { homeViewModel.loanLimitStatus = .upcomingPayment }
+//                    }
+//                    .padding()
                     
                     switch homeViewModel.loanLimitStatus {
                     case .notRegistered:
