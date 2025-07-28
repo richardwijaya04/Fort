@@ -91,8 +91,10 @@ struct HomeView: View {
 struct Logo_HelpCentreView: View {
     var body: some View {
         HStack(spacing: 100){
-            Text("LOGO")
-                .font(.system(size: 28, weight: .bold, design: .default))
+            Image("Logo")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 76)
             Button(action: {}) {
                 
                 HStack {

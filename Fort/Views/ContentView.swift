@@ -17,10 +17,12 @@ struct ContentView: View {
         NavigationStack {
 //            if otpModel.log_status {
                 HomeView()
+//                HomeView()
 //            }
 //            else {
 //                LoginView()
 //            }
+            HomeView()
         }
         .environmentObject(otpModel)
     }
