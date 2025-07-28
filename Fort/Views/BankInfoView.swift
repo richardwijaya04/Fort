@@ -41,7 +41,7 @@ struct BankInfoView: View {
                         
                         PersonalInfoDropDown(title: "Bank",hint: "Pilih Bank", options: BankInfoViewModel.listNamaBank,selection: $viewModel.namaBank, state: $viewModel.namaBankState)
                         
-                        PersonalInfoTextField(text: $viewModel.nomorRekening, title: "Nomor Rekening", state: $viewModel.nomorRekeningState)
+                        PersonalInfoTextField(text: $viewModel.nomorRekening, title: "Nomor Rekening", keyboardType: .numberPad, state: $viewModel.nomorRekeningState)
                         
                         Spacer()
                         
