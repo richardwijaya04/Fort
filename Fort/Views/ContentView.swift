@@ -22,7 +22,6 @@ struct ContentView: View {
 //            else {
 //                LoginView()
 //            }
-            HomeView()
         }
         .environmentObject(otpModel)
     }
