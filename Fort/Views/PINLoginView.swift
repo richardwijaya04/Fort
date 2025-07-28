@@ -98,9 +98,12 @@ struct PINLoginView: View {
                 isKeyboardFocused = true
             }
         }
-        .fullScreenCover(isPresented: $viewModel.navigateToHome) {
-                    // Tujuan navigasi yang benar
-                    HomeView()
-                }
+//        .fullScreenCover(isPresented: $viewModel.navigateToHome) {
+//                    // Tujuan navigasi yang benar
+//                    HomeView()
+//                }
+        .navigationDestination(isPresented: $viewModel.navigateToHome) {
+            HomeView()
+        }
     }
 }

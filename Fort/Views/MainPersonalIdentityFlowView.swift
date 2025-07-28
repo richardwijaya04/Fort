@@ -128,6 +128,8 @@ struct MainPersonalIdentityFlowView: View {
                 } else if ocrViewModel.isShowErrorAlert {
                     // (Anda bisa pindahkan UI Error Alert ke sini juga jika mau)
                     Color.black.opacity(0.5).ignoresSafeArea()
+                    OCRFailedAlertView(viewModel: ocrViewModel)
+
                 } else if ocrViewModel.isShowConfirmationAlert && ocrViewModel.resultOCR != nil {
                     // (Pindahkan UI Confirmation Alert ke sini juga)
                     Color.black.opacity(0.5).ignoresSafeArea()
@@ -137,22 +139,24 @@ struct MainPersonalIdentityFlowView: View {
         }
         .navigationBarBackButtonHidden(true)
         .fullScreenCover(isPresented: $showFailedView) {
-                FailedVerificationView(onRetry: {
+            FailedVerificationView(onRetry: {
                 showFailedView = false
                 livenessResetID = UUID()
                 navigateToHome = false
             })
         }
         .fullScreenCover(isPresented: $showSuccessView) {
-                SuccessVerificationView(onCompletion: {
+            SuccessVerificationView(onCompletion: {
                 showSuccessView = false
                 navigateToHome = true
                 flowState = .ocr // Reset flow state to start over
             })
         }
-        .fullScreenCover(isPresented: $navigateToHome) {
+        // navigation after verif success
+        .navigationDestination(isPresented: $navigateToHome) {
             HomeView()
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private func handleBackNavigation() {
@@ -175,6 +179,42 @@ struct MainPersonalIdentityFlowView: View {
         }
     }
 }
+
+// MARK: - Confirmation Text Field
+struct OCRFailedAlertView: View {
+    @ObservedObject var viewModel: OCRCameraViewModel
+
+    var body: some View {
+            ZStack {
+                Color.black.opacity(0.5)
+                    .ignoresSafeArea()
+                VStack (spacing: 25) {
+                    Image(systemName: "x.circle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                        .foregroundStyle(.red)
+                    
+                    VStack (spacing: 36){
+                        VStack (spacing: 5){
+                            Text("KTP Tidak Terdeteksi")
+                                .font(.system(size: 24, weight: .semibold))
+                            
+                            Text("Pastikan KTP berada di dalam bingkai")
+                                .font(.system(size: 14, weight: .regular))
+                        }
+                        ErrorButton(text: "Foto Ulang") {
+                            viewModel.isShowErrorAlert.toggle()
+                        }
+                    }
+                }
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
+                .padding(.horizontal, 30)
+            }
+        }
+}
+
 
 // MARK: - Confirmation Alert for OCR KTP
 struct OCRConfirmationAlertView: View {
